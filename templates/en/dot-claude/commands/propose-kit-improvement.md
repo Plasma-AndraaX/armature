@@ -25,8 +25,8 @@ $ARGUMENTS
 - `docs/prefs/README.md` (the generic mechanism explanation, never an actual contributor's file)
 - Every `.claude/commands/*.md` present (including this file)
 - `tools/generate-dashboard.py` (if present)
-- `claude.sh`, `.env.claude.example`, `.gitignore`
-- `.claude/settings.json` — **only** the memory-block hook portion, never `enabledPlugins` or anything else in it (that's this project's own choices)
+- `claude.sh`, `.env.claude.example`, `.gitignore`, `tools/session-end-capture.sh` (if present)
+- `.claude/settings.json` — **only** the memory-block hook portion and the `SessionEnd` capture hook block (including its `message`/`auto` mode argument), never `enabledPlugins` or anything else in it (that's this project's own choices)
 
 **Never consider, under any circumstance, even if it looks generic**: `docs/architecture.md`, `docs/operations.md`, `docs/coding-standards.md`, `docs/lessons-technical.md`, `docs/lessons-domain.md`, anything under `docs/backlog/`, any numbered file under `docs/adr/` or `docs/plans/` (i.e. actual ADRs/plans, not the templates), `docs/prefs/<login>.md` files, `docs/changelog/_next.md` or any dated changelog entry, `docs/claude-code-tooling.md`. These are pure project content by construction — there is no scenario where diffing them for upstreaming is correct, so they're excluded structurally rather than left to judgment.
 

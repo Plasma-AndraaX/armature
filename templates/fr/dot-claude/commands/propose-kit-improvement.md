@@ -25,8 +25,8 @@ $ARGUMENTS
 - `docs/prefs/README.md` (l'explication générique du mécanisme, jamais le fichier réel d'un contributeur)
 - Chaque `.claude/commands/*.md` présent (y compris ce fichier)
 - `tools/generate-dashboard.py` (si présent)
-- `claude.sh`, `.env.claude.example`, `.gitignore`
-- `.claude/settings.json` — **seulement** la partie hook memory-block, jamais `enabledPlugins` ni le reste (ce sont les choix propres à ce projet)
+- `claude.sh`, `.env.claude.example`, `.gitignore`, `tools/session-end-capture.sh` (si présent)
+- `.claude/settings.json` — **seulement** la partie hook memory-block et le bloc du hook `SessionEnd` de capture (y compris son argument de mode `message`/`auto`), jamais `enabledPlugins` ni le reste (ce sont les choix propres à ce projet)
 
 **Ne jamais considérer, en aucune circonstance, même si ça a l'air générique** : `docs/architecture.md`, `docs/operations.md`, `docs/coding-standards.md`, `docs/lessons-technical.md`, `docs/lessons-domain.md`, tout ce qui est sous `docs/backlog/`, tout fichier numéroté sous `docs/adr/` ou `docs/plans/` (les vraies ADR/plans, pas les gabarits), les fichiers `docs/prefs/<login>.md`, `docs/changelog/_next.md` ou toute entrée datée du changelog, `docs/claude-code-tooling.md`. Ce sont du contenu projet par construction — il n'y a aucun scénario où les diffter pour remontée est correct, donc ils sont exclus structurellement plutôt que laissés au jugement.
 

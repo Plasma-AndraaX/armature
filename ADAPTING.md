@@ -75,6 +75,15 @@ Deux gestes distincts, pas un choix exclusif :
 
 **Limite connue** : c'est un script bash. Sur Windows natif (hors WSL), il ne fonctionne pas tel quel — un équivalent `.ps1` est une extension possible, pas fournie en v1.
 
+## Capture en fin de session — message ou auto
+
+Un hook `SessionEnd` (profil Full uniquement) peut prévenir quand une session se termine avec du travail non capturé. Deux modes, choisis à la Phase 3 du bootstrap :
+
+- **`message`** *(recommandé par défaut)* — affiche un rappel visible (mentionnant `claude.sh --continue`) si l'arbre git est sale et que rien dans le transcript ne montre que `/capture-lessons`/`/changelog-capture` ont déjà tourné. Coût nul si rien à signaler, humain toujours dans la boucle avant toute écriture.
+- **`auto`** — lance un `claude -p` headless détaché (`tools/session-end-capture.sh auto`) qui lit la fin du transcript, applique **les mêmes filtres** que `.claude/commands/capture-lessons.md`/`changelog-capture.md` (il les lit lui-même plutôt que de dupliquer la doctrine), et écrit directement dans les fichiers concernés. Il ne commite **jamais** — la relecture humaine reste obligatoire, juste déplacée à la session suivante plutôt que supprimée. Outils autorisés restreints à `Read Edit Write Glob Grep` (pas de Bash), garde anti-récursion par variable d'environnement (`CLAUDE_HOOK_SPAWNED`), transcript capé à 4 Mo.
+
+Le gate (arbre dirty + rien capturé) est une heuristique, pas une garantie — même posture "best-effort" que le reste du kit. Le pattern est adapté d'un hook personnel validé en conditions réelles ; durci pour un kit public (pas de Bash dans les outils headless, pas de logique spécifique à un environnement).
+
 ## Conventions de code hétérogènes
 
 `docs/coding-standards.md` (présent dans les deux profils, comme `architecture.md`/`operations.md`) est l'endroit où vit le style de code réellement observé — pas une simple ligne dans `CLAUDE.md`, précisément parce qu'un codebase peut être hétérogène (plusieurs langages, dérive entre sous-projets, legacy vs code récent). Le skill l'écrit à partir de Phase 2 : un échantillonnage de fichiers réels, pas seulement la config du linter.

@@ -61,6 +61,7 @@ Ask the user (pre-filling defaults from Phase 2 where available):
 - **Memory-block hook** — **strongly recommend enabling it**, regardless of profile or team size. Private memory that never gets versioned is an easy way to silently lose decisions, drift from what the team actually agreed, or leak assumptions across projects with no audit trail — this gets worse, not better, over time, and is genuinely costly to discover after the fact. Say this plainly, don't present it as a neutral coin-flip. Still ask — don't force it — but the default answer you argue for is *yes*. If the user declines, that's their call, but make sure they've heard the reasoning first (see `docs/persistence-strategy.md.tpl`'s intro for the fuller argument).
 - **Changelog module** *(Full profile only)* — does this project ship to users who'd care about a "what changed" note (a product, an app, a public library)? If so, offer the `docs/changelog/` module (`/changelog-capture` + `/changelog-draft`, see `docs/changelog/README.md.tpl`). Skip the question entirely for Minimal profile or for projects with no real "user" in this sense (an internal script, a one-off tool) — don't generate unused ceremony.
 - **Suggested plugins/MCP servers** *(Full profile only, only if the discovery step above found candidates)* — for each candidate, explain in one line why it's relevant to *this* project (tied to what was actually detected), then ask: **enable it now** (write it into `.claude/settings.json`'s `enabledPlugins`, or hand over the MCP server's setup command if it needs one), or **just record it** in `docs/claude-code-tooling.md` as `suggested` for the user to decide later. Recording happens either way — it's not one-or-the-other, see Phase 4. If enabling requires a credential/secret you don't have, don't try to obtain or provision it yourself (see Phase 5's Forgejo handling for why) — give the exact setup command and let the user run it themselves.
+- **Session-end capture** *(Full profile only)* — when a session ends with uncommitted work and neither `/capture-lessons` nor `/changelog-capture` ran, should this project: do nothing (**off**), print a visible reminder pointing at `claude.sh --continue` (**message**), or spawn a detached headless `claude -p` that performs the capture itself, writing files but never committing (**auto**)? Recommend **message** as the default — it costs nothing when there's nothing to capture, and keeps a human in the loop before anything gets written. Mention **auto** as a real option for a user who wants it and accepts the tradeoff (background token cost, no live review before the write — though the change still isn't committed, so it's reviewed at the next session, just later). Don't ask this at all if the project has no `/capture-lessons` (i.e. never ask on Minimal — this question shouldn't come up there in the first place).
 
 Use `AskUserQuestion` for these — they're genuine choices, not things to assume.
 
@@ -75,6 +76,7 @@ For every file under `TPL_ROOT` (the language variant chosen in Phase 1), apply 
 - `templates/claude.sh` → `<target>/claude.sh`, then `chmod +x` it
 - `templates/.env.claude.example` → `<target>/.env.claude.example` (no placeholders — copied verbatim)
 - `templates/.gitignore` → `<target>/.gitignore`: if the target already has one, **append** the `.env.claude`/OS-cruft entries (checking they're not already present) rather than overwriting an existing file
+- If session-end capture ≠ off: `templates/tools/session-end-capture.sh` → `<target>/tools/session-end-capture.sh`, then `chmod +x` it. Also append `tools/session-end-capture.log` to `<target>/.gitignore` (noisy debug log, never worth committing).
 
 **Placeholder substitution** — replace in every `.tpl` file:
 - `{{PROJECT_NAME}}` → the confirmed project name
@@ -98,13 +100,28 @@ For every file under `TPL_ROOT` (the language variant chosen in Phase 1), apply 
 - `docs/operations.md`'s Setup/Build/Run/Test sections → fill with detected commands where confidently identified; leave `TODO` for what you couldn't determine (e.g. deploy process, which is rarely inferable from the repo alone).
 - If Phase 3's TODO-triage question was answered "yes", convert the samples found into backlog items (or into a note for the external tool, if that's where backlog lives) following the kit's usual granularity rules (`docs/workflow.md` § *Backlog item granularity*, Full profile) rather than dumping them in unfiltered.
 
-**`docs/claude-code-tooling.md` (Full profile) — the Inventory tables specifically never ship bare**: always fill "Hooks catalog" (the memory-block hook if enabled), "Custom skills" (already listed in the template), and "Plugins / MCP servers" (every candidate from the discovery step, tagged `adopted` or `suggested` per the user's Phase 3 answer). For anything tagged `suggested` that needs a credential to actually enable, put the exact setup command in "Recommended, not yet enabled" — never a provisioned secret. For anything tagged `adopted`, also add it to `<target>/.claude/settings.json`'s `enabledPlugins` (create the key if absent) — mirror the shape used in this kit's own `.claude/settings.json` (`"enabledPlugins": {"plugin-name@marketplace": true}`). The other sections ("Strategy", "How to evaluate a new plugin/skill", "Security baseline", "References") stay as placeholders — they're intentionally a deliberate policy call for the team to write, not something to infer from a code scan.
+**`docs/claude-code-tooling.md` (Full profile) — the Inventory tables specifically never ship bare**: always fill "Hooks catalog" (the memory-block hook if enabled, and the session-end capture hook if configured — note its mode), "Custom skills" (already listed in the template), and "Plugins / MCP servers" (every candidate from the discovery step, tagged `adopted` or `suggested` per the user's Phase 3 answer). For anything tagged `suggested` that needs a credential to actually enable, put the exact setup command in "Recommended, not yet enabled" — never a provisioned secret. For anything tagged `adopted`, also add it to `<target>/.claude/settings.json`'s `enabledPlugins` (create the key if absent) — mirror the shape used in this kit's own `.claude/settings.json` (`"enabledPlugins": {"plugin-name@marketplace": true}`). The other sections ("Strategy", "How to evaluate a new plugin/skill", "Security baseline", "References") stay as placeholders — they're intentionally a deliberate policy call for the team to write, not something to infer from a code scan.
 
 **Version stamp**: write `<target>/.claude-project-kit-version` with two lines, `sha=<git -C KIT_ROOT rev-parse HEAD>` and `lang=<chosen language from Phase 1>` — both are needed later to diff this project's kit-derived files against the exact original template tree (`KIT_ROOT` at that SHA, that language). See `docs/backlog/versioning-and-retro-propagation.md` in the kit for why. Generated in both profiles.
 
-If `<target>/.claude/settings.json` already exists (pre-existing project with its own Claude config), do **not** overwrite it — show the memory-block hook snippet from `templates/dot-claude/settings.json.tpl` and ask the user to merge it manually, or offer to merge it yourself with an explicit diff.
+If `<target>/.claude/settings.json` already exists (pre-existing project with its own Claude config), do **not** overwrite it — show the relevant hook snippet(s) below and ask the user to merge them manually, or offer to merge them yourself with an explicit diff.
 
-**Memory-block hook** — write `templates/dot-claude/settings.json.tpl` as-is if the user opted in during Phase 3; otherwise write `.claude/settings.json` without the `hooks` key (permissions block only), or skip the file entirely if there's nothing else to configure.
+**Assembling `.claude/settings.json`** — it can carry up to two independent hook entries, each present only if its Phase 3 question was answered accordingly; there is no single static template file for the combined result, build it directly:
+- **Memory-block hook** (`PreToolUse`) — the exact block from `templates/dot-claude/settings.json.tpl`, included only if opted in during Phase 3.
+- **Session-end capture hook** (`SessionEnd`), included only if Phase 3's answer was `message` or `auto`:
+  ```json
+  "SessionEnd": [
+    {
+      "matcher": "",
+      "hooks": [
+        { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/tools/session-end-capture.sh\" message" }
+      ]
+    }
+  ]
+  ```
+  (replace `message` with `auto` per the Phase 3 answer — the mode is an argument to the script, not a separate file).
+
+If neither hook is opted into, write `.claude/settings.json` with just the `permissions` block (no `hooks` key), or skip the file entirely if there's nothing else to configure.
 
 ## Phase 5 — Git
 
@@ -121,6 +138,7 @@ Show:
 - Which plugins/MCP servers were enabled vs. just recorded as `suggested` in `docs/claude-code-tooling.md`, and the setup command for any that need a credential the user has to supply.
 - That `./claude.sh` exists to launch Claude Code with local env vars pre-loaded, and that `.env.claude` (copied from `.env.claude.example`) is where secrets go — gitignored, never committed.
 - The kit commit SHA stamped in `.claude-project-kit-version`, and that `/propose-kit-improvement` (send changes to the kit) and `/pull-kit-updates` (bring kit improvements into this project) both use it as their diff baseline.
+- Whether session-end capture is configured, in which mode, and — for `auto` — that it writes but never commits, so uncommitted files may be waiting for review at the start of the next session (check `tools/session-end-capture.log`).
 
 ## What this skill does NOT do
 

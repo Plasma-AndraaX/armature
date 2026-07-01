@@ -36,6 +36,7 @@ Le résultat, éprouvé sur plusieurs mois sur Holoon : `CLAUDE.md` sert d'index
 | `.claude/settings.json` | Hook optionnel qui bloque l'écriture dans la mémoire privée Claude et renvoie vers `persistence-strategy.md`. |
 | `.claude/commands/new-adr.md`, `capture-lessons.md`, `whats-left.md`, `dashboard.md` *(profil Full)* | Skills qui font vivre le système au quotidien. |
 | `claude.sh` + `.env.claude.example` + `.gitignore` | Script de lancement qui charge `.env.claude` (gitignored, jamais commité) puis lance `claude "$@"`. L'exemple documente valeur en clair ou résolution via un gestionnaire de mots de passe. Bash uniquement (pas de `.ps1` fourni). |
+| `tools/session-end-capture.sh` *(profil Full, sur demande)* | Hook `SessionEnd` optionnel : rappel visible (mode `message`) ou capture headless automatique sans commit (mode `auto`) quand une session se termine avec du travail non capturé. |
 | `docs/changelog/` + `/changelog-capture`, `/changelog-draft` *(profil Full, sur demande)* | Notes de release utilisateur : capture au fil de l'eau, rédaction à la release. Sans traduction multi-langue ni publication automatisée — voir `ADAPTING.md`. |
 | `.claude-project-kit-version` + `/propose-kit-improvement` | Tamponne le SHA du kit + la langue choisie à la génération, pour pouvoir diffter les fichiers propres au kit contre l'original et proposer un patch filtré en retour — jamais de push/PR sans confirmation explicite. |
 
