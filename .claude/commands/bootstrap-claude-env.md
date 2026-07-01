@@ -1,5 +1,5 @@
 ---
-description: Bootstrap the Claude Code documentation/workflow environment (CLAUDE.md, docs/, ADR↔plan↔backlog, skills) into a target project, generic across any language/stack.
+description: Bootstrap the Claude Code documentation/workflow environment (CLAUDE.md, docs/, ADR↔plan↔backlog, skills) into a target project, generic across any language/stack and available in multiple content languages (see templates/<lang>/).
 argument-hint: [absolute path to target project — defaults to the current directory]
 ---
 
@@ -16,7 +16,7 @@ Target path argument: **$ARGUMENTS**
 - If the target directory doesn't exist, create it (`mkdir -p`).
 - If `<target>/CLAUDE.md` already exists, stop and ask the user how to proceed: overwrite, merge (show a diff of what would change per-file), or abort. Never silently overwrite existing project docs.
 
-## Phase 1 — Locate this kit's templates
+## Phase 1 — Locate this kit's templates and pick a language
 
 Resolve `KIT_ROOT` in this order, stop at the first hit:
 1. `$CLAUDE_PROJECT_KIT_HOME` env var, if set and `$CLAUDE_PROJECT_KIT_HOME/templates` exists.
@@ -24,6 +24,10 @@ Resolve `KIT_ROOT` in this order, stop at the first hit:
 3. `/mnt/c/dev/claude-project-kit/templates` (default known location on this machine).
 
 If none exist, stop and ask the user for the path to their `claude-project-kit` checkout.
+
+List `KIT_ROOT`'s immediate subdirectories — each one is a language variant (e.g. `en`, `fr`). Ask the user which one to use via `AskUserQuestion`, defaulting the suggested option to the language they're currently conversing in if it matches an available variant. Resolve `TPL_ROOT = KIT_ROOT/<chosen-lang>`. Every path referenced as `templates/...` in the phases below means `TPL_ROOT/...` (i.e. language-relative, not `KIT_ROOT` directly).
+
+If only one language variant exists, skip the question and use it silently.
 
 ## Phase 2 — Analyze existing code (if any)
 
@@ -52,7 +56,7 @@ Use `AskUserQuestion` for these — they're genuine choices, not things to assum
 
 ## Phase 4 — Generate
 
-For every file under `KIT_ROOT`, apply this mapping to the target:
+For every file under `TPL_ROOT` (the language variant chosen in Phase 1), apply this mapping to the target:
 - `templates/CLAUDE.md.tpl` → `<target>/CLAUDE.md`
 - `templates/docs/**/*.tpl` → `<target>/docs/**/*` (strip `.tpl`)
 - `templates/docs/adr/template.md`, `templates/docs/plans/template.md` → copied verbatim (no placeholders, no `.tpl` suffix — already generic)

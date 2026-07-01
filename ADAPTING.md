@@ -13,6 +13,12 @@ Check-list de ce qu'il faut personnaliser après (ou pendant) un `/bootstrap-cla
 
 Le passage Minimal → Full n'est pas automatisé : relance `/bootstrap-claude-env` sur le même répertoire, le skill détecte les fichiers déjà présents et ne régénère que ce qui manque (voir § *Écraser vs compléter* dans le skill).
 
+## Langue des templates
+
+Indépendant du profil Full/Minimal : `templates/en/` et `templates/fr/` ont la même structure et la même mécanique (marqueurs de profil, placeholders, script dashboard) — seule la prose diffère. Le skill demande la langue en Phase 1.
+
+Une correction de fond (pas juste un mot) apportée à un fichier d'une langue — par exemple le fix du bug de tableau Markdown cassé par les marqueurs `FULL-ONLY` — doit être reportée manuellement dans l'autre langue : ce n'est **pas** automatique. Vérifier les deux dossiers `templates/<lang>/` restent en parité structurelle (mêmes fichiers, mêmes lignes marquées) après toute évolution du skill ou d'un gabarit.
+
 ## Solo vs équipe
 
 - **Solo** : `docs/prefs/<login>.md` a moins de valeur (tu n'as personne d'autre à qui rendre tes préférences visibles) — tu peux le garder pour toi-futur sur un autre poste, ou l'omettre.

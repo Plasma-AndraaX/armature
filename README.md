@@ -39,6 +39,12 @@ Deux profils au moment de la génération :
 
 Détail des deux profils et de ce qu'il faut adapter selon ton contexte : [`ADAPTING.md`](ADAPTING.md).
 
+## Langues
+
+Les gabarits vivent sous `templates/<lang>/` — un dossier par langue de contenu, structure identique (même fichiers, mêmes marqueurs de profil `<!-- FULL-ONLY -->`/`<!-- MINIMAL-ONLY -->`), seul le texte change. Aujourd'hui : `templates/en/` (anglais) et `templates/fr/` (français). Le skill demande la langue au démarrage (Phase 1) — si une seule variante existe, il l'utilise sans demander.
+
+Ajouter une langue : dupliquer `templates/en/` en `templates/<code>/` et traduire fichier par fichier, en gardant les marqueurs de profil et les clés de frontmatter YAML (`status`, `date`, `related-adr`, etc.) en anglais — seule la prose change. Pour `tools/generate-dashboard.py.tpl`, adapter aussi les regex `is_resolved`/`is_primary`/`find_subitem_of` aux conventions textuelles de la nouvelle langue (ex. le marqueur de bundle « PRIMARY » devient « PRINCIPAL » en français).
+
 ## Détection automatique du projet existant
 
 Si le répertoire cible contient déjà du code, le skill fait un premier passage d'analyse (façon `/init` natif de Claude Code) : détection des manifests (`package.json`, `*.csproj`, `pyproject.toml`, `go.mod`, `Cargo.toml`...), du langage/framework, des scripts de build/run/test déjà déclarés, et de la structure des dossiers. Les réponses détectées pré-remplissent `CLAUDE.md`, `docs/architecture.md` et `docs/operations.md` au lieu de laisser des `TODO` vides — à confirmer/corriger, pas à prendre pour argent comptant sur un projet complexe. Sur un répertoire vide (nouveau projet net-new), cette phase est simplement sautée.
@@ -55,7 +61,7 @@ Puis, dans la session :
 ```
 /bootstrap-claude-env /chemin/absolu/vers/mon-nouveau-projet
 ```
-Le skill pose quelques questions (nom du projet, stack, solo/équipe, profil Full/Minimal, hook mémoire oui/non) puis écrit dans le répertoire cible — pas besoin d'y être `cd`, Claude Code écrit à des chemins absolus arbitraires.
+Le skill demande d'abord la langue des gabarits (§ Langues ci-dessus), puis pose quelques questions (nom du projet, stack, solo/équipe, profil Full/Minimal, hook mémoire oui/non), puis écrit dans le répertoire cible — pas besoin d'y être `cd`, Claude Code écrit à des chemins absolus arbitraires.
 
 ### Option B — commande globale
 

@@ -19,11 +19,9 @@ This file is intentionally short and stable. Deep context lives under [`docs/`](
 | Why is this non-obvious? / what trap did someone already hit? | [`docs/lessons-technical.md`](docs/lessons-technical.md) |
 | What's queued for later — backlog, deferred items? | [`docs/backlog/`](docs/backlog/README.md) |
 | Where do I write down a decision / preference / lesson so it survives this conversation? | [`docs/persistence-strategy.md`](docs/persistence-strategy.md) — matrix of "type of info → file". |
-<!-- FULL-ONLY -->
-| Why was this architectural choice made? | [`docs/adr/`](docs/adr/README.md) (numbered ADRs) |
+<!-- FULL-ONLY --> | Why was this architectural choice made? | [`docs/adr/`](docs/adr/README.md) (numbered ADRs) |
 | How was *X* actually implemented / what alternatives were weighed? | [`docs/plans/`](docs/plans/README.md) (companions to ADRs) |
-| When do I open an ADR vs a backlog item? / where do points that emerge during implementation go? | [`docs/workflow.md`](docs/workflow.md) — ADR ↔ plan ↔ backlog lifecycle. |
-<!-- /FULL-ONLY -->
+| When do I open an ADR vs a backlog item? / where do points that emerge during implementation go? | [`docs/workflow.md`](docs/workflow.md) — ADR ↔ plan ↔ backlog lifecycle. | <!-- /FULL-ONLY -->
 
 When you solve a non-obvious problem or hit a trap that isn't in the code, append a dated section to `docs/lessons-technical.md` (or `docs/lessons-domain.md` if this project has one). <!-- FULL-ONLY -->When you make an architectural choice, write a new ADR (see [`docs/adr/template.md`](docs/adr/template.md)). <!-- /FULL-ONLY -->Anything else — see [`docs/persistence-strategy.md`](docs/persistence-strategy.md) for the full matrix<!-- FULL-ONLY -->, and [`docs/workflow.md`](docs/workflow.md) for *when*<!-- /FULL-ONLY -->.
 
