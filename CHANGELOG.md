@@ -29,6 +29,9 @@ This is **not** the same thing as:
 
 All ten found by actually running the three skills for real for the first time (2026-07-01/02) — see `docs/backlog/first-real-run-findings.md`.
 
+### Fixed
+- `claude.sh` (both `en`/`fr`): fail with a clear message if `claude` isn't found in `PATH`, instead of a bare shell `command not found` from `exec claude "$@"`. Surfaced via `/propose-kit-improvement` from a bootstrapped project.
+
 ## [0.1.0] - 2026-07-01
 
 Initial build.

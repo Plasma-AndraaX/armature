@@ -20,4 +20,9 @@ else
   echo "No .env.claude found — copy .env.claude.example and fill in your values if this project needs any. Launching claude without extra env vars." >&2
 fi
 
+if ! command -v claude >/dev/null 2>&1; then
+  echo "claude not found in PATH — install Claude Code (https://claude.com/claude-code) before rerunning this script." >&2
+  exit 1
+fi
+
 exec claude "$@"
