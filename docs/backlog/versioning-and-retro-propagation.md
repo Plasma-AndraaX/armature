@@ -26,8 +26,8 @@ Construit : `/propose-kit-improvement` (généré dans chaque projet bootstrapé
 
 Ce qui reste ouvert : rien n'assure qu'un contributeur pense à le lancer — pas de rappel automatique, juste une commande disponible.
 
-## Tampon étendu à profile/changelog — ✅ résolu (2026-07-02)
+## Tampon étendu à profile/changelog/memoryhook — ✅ résolu (2026-07-02)
 
 `.claude-project-kit-version` ne stockait que `sha=`/`lang=` ; le profil (Full/Minimal) et le choix changelog devaient être redéduits de la présence/absence de fichiers par `/propose-kit-improvement`/`/pull-kit-updates` lors de la normalisation — ambiguïté silencieuse entre "Minimal choisi au bootstrap" et "Full choisi puis fichiers supprimés depuis". Trouvé lors du premier run réel des 3 skills, voir `docs/backlog/first-real-run-findings.md`.
 
-Ajout de `profile=full|minimal` et `changelog=yes|no` au tampon (Phase 4 de `bootstrap-claude-env.md`). Purement additif — les deux skills miroirs retombent sur l'ancienne inférence par présence de fichiers si ces champs sont absents (tampon généré avant ce changement), donc pas de rupture pour les projets déjà bootstrapés (ex. `voxtrail`, tamponné avant cet ajout).
+Ajout de `profile=full|minimal` et `changelog=yes|no` au tampon (Phase 4 de `bootstrap-claude-env.md`). Puis, avec l'axe `MEMORYHOOK-ONLY` (cf. anomalie A1 de `first-real-run-findings.md`), ajout d'un cinquième champ `memoryhook=yes|no` — le paragraphe d'interdiction de la mémoire privée dans `persistence-strategy.md` est désormais gaté sur ce choix (indépendant de Full/Minimal), plus sur `FULL-ONLY`. Purement additif — les deux skills miroirs retombent sur l'ancienne inférence si un champ est absent (`profile`/`changelog` par présence de fichiers, `memoryhook` par présence du hook `PreToolUse` dans `.claude/settings.json`), donc pas de rupture pour les projets déjà bootstrapés (ex. `voxtrail`, tamponné avant ces ajouts).

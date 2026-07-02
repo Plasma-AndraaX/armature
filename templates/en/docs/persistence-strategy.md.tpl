@@ -2,11 +2,11 @@
 
 Where Claude (or any AI assistant working on this repo) must write things that need to outlive a single conversation.
 
-<!-- FULL-ONLY --> <!-- memory-block hook paragraph — keep only if the memory-block hook was enabled at bootstrap time -->
+<!-- MEMORYHOOK-ONLY -->
 **Claude's private auto-memory (`~/.claude/projects/<project>/memory/`) is forbidden on this project** — anything worth remembering is worth versioning, readable by other contributors, and reviewable in a PR.
 
 A `PreToolUse` hook in `.claude/settings.json` blocks any write under the memory directory and points back here.
-<!-- /FULL-ONLY -->
+<!-- /MEMORYHOOK-ONLY -->
 
 <!-- FULL-ONLY -->
 > **See also**: [`workflow.md`](workflow.md) — this document says *where* to put things; the workflow doc says *when* (ADR ↔ plan ↔ backlog lifecycle, and where points that emerge during implementation go).
@@ -21,7 +21,7 @@ A `PreToolUse` hook in `.claude/settings.json` blocks any write under the memory
 | **Non-obvious technical lesson** (gotcha, tooling trap, library quirk) | [`docs/lessons-technical.md`](lessons-technical.md) | dated section |
 <!-- FULL-ONLY --> | **Incident / postmortem** (dated event: timeline, root cause, follow-up actions) | [`docs/incidents/`](incidents/README.md) — one file per incident | ≠ lesson (`lessons-technical`), ≠ work (`backlog`) | <!-- /FULL-ONLY -->
 | **Code style / naming convention** observed or declared | [`docs/coding-standards.md`](coding-standards.md) | one section per language/module if heterogeneous; `/coding-standards` proposes from the stack |
-| **Non-obvious business rule** *(if this project has `lessons-domain.md`)* | [`docs/lessons-domain.md`](lessons-domain.md) | dated section |
+| **Non-obvious business rule** *(if this project has `lessons-domain.md`)* | `docs/lessons-domain.md` (only generated for a rich business domain) | dated section |
 | **Current state of the system** (architecture, how it works today) | [`docs/architecture.md`](architecture.md) | update as reality changes |
 | **Setup / build / deploy** | [`docs/operations.md`](operations.md) | |
 | **New frequent question** of the "Question → Read" kind | add a row to the table in [`CLAUDE.md`](../CLAUDE.md) | keep it short — CLAUDE.md is the index, not the content |

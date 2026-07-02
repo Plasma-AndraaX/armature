@@ -11,7 +11,7 @@ $ARGUMENTS
 
 ## Phase 1 — Locate the baseline and the kit's current state
 
-- Read `.claude-project-kit-version` at the project root (`sha=...`, `lang=...`, and — on a recent stamp — `profile=full|minimal` and `changelog=yes|no`). If missing, there's no baseline to diff from — tell the user and stop (don't guess). If `profile=`/`changelog=` are absent (a stamp from before they existed), infer them from which Full-only files are present, as before.
+- Read `.claude-project-kit-version` at the project root (`sha=...`, `lang=...`, and — on a recent stamp — `profile=full|minimal`, `changelog=yes|no` and `memoryhook=yes|no`). If missing, there's no baseline to diff from — tell the user and stop (don't guess). If `profile=`/`changelog=`/`memoryhook=` are absent (a stamp from before they existed), infer them as before: `profile`/`changelog` from which Full-only files are present, `memoryhook` from whether the memory-block (`PreToolUse`) hook is present in `.claude/settings.json`.
 - Resolve `KIT_ROOT`: `$CLAUDE_PROJECT_KIT_HOME` env var if set, otherwise `/mnt/c/dev/claude-project-kit`, otherwise ask.
 - Compute `NEW_SHA = git -C KIT_ROOT rev-parse HEAD`. If it equals the stamped `sha`, tell the user the kit hasn't moved since bootstrap and stop — nothing to pull.
 - Verify the stamped `sha` is still reachable in `KIT_ROOT`'s history (`git -C KIT_ROOT cat-file -e <sha>`). If not, say precisely why and stop rather than diffing against the wrong thing.
@@ -28,7 +28,7 @@ Never considered, structurally excluded: `docs/architecture.md`, `docs/operation
 
 ## Phase 3 — Three-way resolution per candidate
 
-For each relevant candidate path, gather three versions, all normalized (placeholders substituted with *this* project's actual name/description/stack, `FULL-ONLY`/`MINIMAL-ONLY`/`CHANGELOG-ONLY` markers resolved per the `profile=`/`changelog=` read in Phase 1 — same normalization `/propose-kit-improvement` does, including for leftover scaffolding comments, see its Phase 3). For whether a path takes a `.tpl` suffix, see `CONTRIBUTING.md` § *Which files get a `.tpl` suffix* in the kit — don't re-derive the rule:
+For each relevant candidate path, gather three versions, all normalized (placeholders substituted with *this* project's actual name/description/stack, `FULL-ONLY`/`MINIMAL-ONLY`/`CHANGELOG-ONLY`/`MEMORYHOOK-ONLY` markers resolved per the `profile=`/`changelog=`/`memoryhook=` read in Phase 1 — same normalization `/propose-kit-improvement` does, including for leftover scaffolding comments, see its Phase 3). For whether a path takes a `.tpl` suffix, see `CONTRIBUTING.md` § *Which files get a `.tpl` suffix* in the kit — don't re-derive the rule:
 - **BASE** — `git -C KIT_ROOT show <stamped-sha>:templates/<lang>/<mapped-path>`, normalized.
 - **NEW** — `git -C KIT_ROOT show <NEW_SHA>:templates/<lang>/<mapped-path>`, normalized. If the path doesn't exist at `NEW_SHA`, the kit dropped it — flag as "kit removed this file" rather than silently ignoring.
 - **MINE** — the project's current actual file content, or "absent" if it was never generated (irrelevant to this project) or was deleted.

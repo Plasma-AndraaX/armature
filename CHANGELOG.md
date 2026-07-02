@@ -14,6 +14,13 @@ This is **not** the same thing as:
 
 ### Added
 - `/coding-standards` command (both profiles): proposes or refreshes `docs/coding-standards.md` from the project's stack, pulling idiomatic conventions (formatter + style guide) from a live docs source (`find-docs`/`ctx7`) when available, falling back to model knowledge (flagged) otherwise. Documentation only — never installs or configures a tool; offers a derived `.editorconfig` but doesn't impose it. Fills the new-project gap without bloating the bootstrap. See ADR 0003.
+- New `MEMORYHOOK-ONLY` marker axis + `memoryhook=yes|no` version-stamp field, gated purely by the Phase 3 memory-block-hook question (independent of Full/Minimal, like `CHANGELOG-ONLY`). Wired through `lint-templates.py` (`ALL_TAGS` + memoryhook combos), `bootstrap-claude-env.md` (Phase 3/4), and `/propose-kit-improvement`/`/pull-kit-updates` (tolerant fallback: infer from the hook's presence in `.claude/settings.json` when the field is absent, so older stamps keep working).
+- `lint-templates.py` hardening: (a) a dead-relative-link check — flags a link to a kit-template file not generated in the current profile; (b) a leading-space-before-table-row check. Both would have caught the anomalies below. The linter now also covers every profile × changelog × memoryhook combination.
+
+### Fixed
+- `persistence-strategy.md`: the private-memory-ban paragraph was gated on `FULL-ONLY`, so it vanished in a Minimal project that had *enabled* the memory hook — leaving the doc the hook's error message points at silent on the rule. Now gated on the `MEMORYHOOK-ONLY` axis (renders iff the hook is enabled, in either profile). Found on a real `/bootstrap-claude-env` run (MapMeJDR).
+- Dead relative links in generated docs: `README.md`'s `adr/`+`plans/` table rows and the ADR/Plans/Cross-references bullets are now `FULL-ONLY` (they pointed at directories a Minimal project doesn't have); `lessons-domain.md` links in `README.md` and `persistence-strategy.md` are now un-linked code spans (that file is only generated for a rich business domain). Found on the same run + surfaced by the new dead-link check.
+- `strip_markers` now strips a marker symmetrically — a marker opening/closing a table row takes its adjacent space so rendered rows start with `|` instead of a stray leading space; a marker mid-prose keeps its surrounding spaces. Also removed a maintainer-only HTML comment that used to leak into the generated `persistence-strategy.md`.
 
 ## [0.3.0] - 2026-07-02
 

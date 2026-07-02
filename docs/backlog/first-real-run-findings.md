@@ -2,6 +2,8 @@
 
 **Triage fait le 2026-07-02** : 9 des 10 frictions corrigées directement (voir le statut par item ci-dessous et `CHANGELOG.md` § Fixed/Added [Unreleased]). Seul l'item 8 reste volontairement non corrigé (jugé correct de le laisser au jugement au cas par cas).
 
+> **Deuxième vague — runs réels sur MapMeJDR (2026-07-02).** Deux nouveaux runs de `/bootstrap-claude-env` sur un vrai projet (MapMeJDR, web-app JDR fog-of-war), d'abord en **Minimal** puis en upgrade **Minimal→Full**, ont fait ressortir **3 anomalies de rendu des templates** que le premier run (voxtrail, Full) n'avait pas exercées — parce qu'elles ne se manifestent qu'en Minimal ou au croisement profil × hook. Les 3 sont corrigées ; le détail suit en fin de fichier (§ *Deuxième vague*).
+
 Résultat du seul item vraiment bloquant de `docs/backlog/README.md` § *Action manuelle requise* : faire tourner `/bootstrap-claude-env`, `/propose-kit-improvement` et `/pull-kit-updates` pour de vrai, dans une session Claude Code fraîche, sur un vrai projet (`/mnt/c/dev/voxtrail`, pas un répertoire jetable vide — pour que la Phase 2 de bootstrap ait un vrai code à analyser).
 
 Méthodologie : chaque skill a été exécuté par un agent **frais** (zéro contexte préalable du kit), lisant le fichier `.md` du skill et suivant ses instructions à la lettre — l'équivalent le plus proche possible d'une vraie invocation `/commande`, `AskUserQuestion` n'étant disponible ni en session headless (`claude -p`) ni pour un subagent lancé via l'outil `Agent` (confirmé empiriquement dans les 3 runs — un repli texte a été utilisé à chaque fois, sans bloquer). Les 3 runs ont réellement écrit/committé (bootstrap + propose ont produit des commits vérifiés sur disque, pas seulement rapportés).
@@ -79,3 +81,29 @@ Le classifieur de sécurité de l'environnement d'exécution a — à raison —
 - `voxtrail` bootstrapé en Full/fr : commits réels dans son historique git (`d2adb65`, `9778337`, `89497b4`, `f7a1ca2`, `4a12d77`, `9e871f1`).
 - `/propose-kit-improvement` a produit un vrai fix accepté et appliqué dans le kit : voir commit `ef79703` sur la branche `propose/claude-sh-path-check` (`claude.sh`, `en`+`fr`, gardé en local, pas poussé).
 - `/pull-kit-updates` a détecté un vrai arbitrage 3 voies provoqué exprès (`.claude/commands/whats-left.md`), présenté BASE/MIEN/NOUVEAU + un brouillon fusionné, et n'a rien écrit avant confirmation directe — résolu en "fusionner", tampon de version avancé vers `7e7d701`.
+
+## Deuxième vague — anomalies de rendu (MapMeJDR, 2026-07-02)
+
+Trois anomalies de rendu des templates, ressorties de deux runs réels de `/bootstrap-claude-env` sur MapMeJDR (Minimal, puis upgrade Minimal→Full). Elles ne se manifestent qu'en Minimal ou au croisement profil × hook — d'où leur invisibilité au premier run (voxtrail, Full). Toutes **corrigées le 2026-07-02** (cf. `CHANGELOG.md` § [Unreleased]).
+
+### A1 ✅ Corrigé — paragraphe du hook mémoire gaté sur le mauvais critère (fonctionnel, le plus grave)
+
+Dans `persistence-strategy.md.tpl`, le paragraphe interdisant la mémoire privée était enveloppé de `FULL-ONLY`. Or le hook mémoire est activable dans **les deux** profils. En Minimal + hook activé, le rendu supprimait le paragraphe — et le doc vers lequel le message d'erreur du hook renvoie devenait muet sur la règle.
+
+**Fait** : introduction d'un axe conditionnel propre — marqueur `MEMORYHOOK-ONLY`, gaté purement par la question hook de la Phase 3 (indépendant de Full/Minimal, exactement comme `CHANGELOG-ONLY`). Répercuté dans `lint-templates.py` (`ALL_TAGS` + combos memoryhook), `bootstrap-claude-env.md` (Phase 3/4 + champ `memoryhook=yes|no` du version stamp), et `/propose-kit-improvement`/`/pull-kit-updates` (fallback tolérant : si le champ est absent, inférer de la présence du hook `PreToolUse` dans `.claude/settings.json`). Approche choisie *(option b de l'énoncé)* plutôt que l'inconditionnel : c'est la seule cohérente avec le précédent `CHANGELOG-ONLY` déjà en place, et correcte sans compromis de formulation.
+
+### A2 ✅ Corrigé — liens cliquables vers des docs non générés (fonctionnel)
+
+- `persistence-strategy.md.tpl` : le lien `[…](lessons-domain.md)` (ligne « Règle métier ») → dé-lié en code span `` `docs/lessons-domain.md` `` + mention « généré seulement si domaine métier riche ».
+- `README.md.tpl` : les lignes de table `adr/` et `plans/` → enveloppées `FULL-ONLY` (elles laissaient deux liens morts en Minimal) ; la ligne de table `lessons-domain.md` → dé-liée (elle ne peut pas être retirée seule du bloc groupé, et le fichier n'existe qu'en domaine riche).
+- **Bonus trouvé par le nouveau check de liens morts** : dans `README.md.tpl` § « Conventions de rédaction », le lien `[…](adr/template.md)` (et les puces ADR/Plans + toute la section « Références croisées », qui ne parlent que d'ADR/plans) → gatés `FULL-ONLY`. Non listé dans l'énoncé, révélé par le durcissement.
+
+### A3 ✅ Corrigé — artefacts du strip des marqueurs (cosmétique)
+
+`strip_markers` traitait les marqueurs de façon asymétrique : un marqueur actif en tête de ligne de tableau (`<!-- FULL-ONLY --> | cell |`) laissait un espace résiduel en tête (` | cell |`). Et sur `persistence-strategy.md.tpl`, un commentaire-note interne (`<!-- paragraphe du hook… -->`) accolé au marqueur fuyait dans la doc livrée.
+
+**Fait** : strip symétrique (le marqueur qui ouvre/ferme une ligne emporte son espace adjacent ; un marqueur en milieu de prose garde ses espaces) ; commentaire interne supprimé ; règle « retire le marqueur **et** l'espace adjacent » répercutée dans `bootstrap-claude-env.md` (Phase 4).
+
+### Durcissement du lint (pourquoi il ne les avait pas vues)
+
+`lint-templates.py` vérifiait l'équilibre des marqueurs, la parité en/fr et les lignes vides dans les tableaux — pas les liens relatifs cassés, ni les espaces en tête, ni les commentaires parasites. Ajouté : **(a)** un check de liens relatifs « vers un fichier du template non généré dans ce profil » (ignore les refs externes/kit comme `ADAPTING.md`) — il aurait attrapé A2 et a effectivement trouvé le lien bonus ci-dessus ; **(b)** un check d'espace en tête de ligne de tableau après rendu — il aurait attrapé A3. Le lint couvre désormais toutes les combinaisons profil × changelog × memoryhook.

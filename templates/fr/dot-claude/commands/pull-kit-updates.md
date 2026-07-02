@@ -11,7 +11,7 @@ $ARGUMENTS
 
 ## Phase 1 — Localiser la baseline et l'état actuel du kit
 
-- Lis `.claude-project-kit-version` à la racine du projet (`sha=...`, `lang=...`, et — sur un tampon récent — `profile=full|minimal` et `changelog=yes|no`). S'il est absent, il n'y a pas de baseline pour diffter — dis-le à l'utilisateur et arrête-toi (ne devine pas). Si `profile=`/`changelog=` sont absents (tampon d'avant leur ajout), déduis-les de la présence/absence des fichiers Full-only comme avant.
+- Lis `.claude-project-kit-version` à la racine du projet (`sha=...`, `lang=...`, et — sur un tampon récent — `profile=full|minimal`, `changelog=yes|no` et `memoryhook=yes|no`). S'il est absent, il n'y a pas de baseline pour diffter — dis-le à l'utilisateur et arrête-toi (ne devine pas). Si `profile=`/`changelog=`/`memoryhook=` sont absents (tampon d'avant leur ajout), déduis-les comme avant : `profile`/`changelog` de la présence des fichiers Full-only, `memoryhook` de la présence du hook memory-block (`PreToolUse`) dans `.claude/settings.json`.
 - Résous `KIT_ROOT` : variable d'env `$CLAUDE_PROJECT_KIT_HOME` si définie, sinon `/mnt/c/dev/claude-project-kit`, sinon demande.
 - Calcule `NEW_SHA = git -C KIT_ROOT rev-parse HEAD`. S'il est égal au `sha` tamponné, dis à l'utilisateur que le kit n'a pas bougé depuis le bootstrap et arrête-toi — rien à tirer.
 - Vérifie que le `sha` tamponné est encore accessible dans l'historique de `KIT_ROOT` (`git -C KIT_ROOT cat-file -e <sha>`). Sinon, explique précisément pourquoi et arrête-toi plutôt que de diffter contre la mauvaise chose.
@@ -28,7 +28,7 @@ Jamais considérés, exclus structurellement : `docs/architecture.md`, `docs/ope
 
 ## Phase 3 — Résolution à 3 voies par candidat
 
-Pour chaque chemin candidat pertinent, rassemble trois versions, toutes normalisées (placeholders substitués avec le vrai nom/description/stack de *ce* projet, marqueurs `FULL-ONLY`/`MINIMAL-ONLY`/`CHANGELOG-ONLY` résolus selon le `profile=`/`changelog=` lus en Phase 1 — même normalisation que `/propose-kit-improvement`, y compris pour le commentaire d'échafaudage résiduel, voir sa Phase 3). Pour savoir si un chemin prend un suffixe `.tpl`, voir `CONTRIBUTING.md` § *Which files get a `.tpl` suffix* dans le kit — ne redevine pas la règle :
+Pour chaque chemin candidat pertinent, rassemble trois versions, toutes normalisées (placeholders substitués avec le vrai nom/description/stack de *ce* projet, marqueurs `FULL-ONLY`/`MINIMAL-ONLY`/`CHANGELOG-ONLY`/`MEMORYHOOK-ONLY` résolus selon le `profile=`/`changelog=`/`memoryhook=` lus en Phase 1 — même normalisation que `/propose-kit-improvement`, y compris pour le commentaire d'échafaudage résiduel, voir sa Phase 3). Pour savoir si un chemin prend un suffixe `.tpl`, voir `CONTRIBUTING.md` § *Which files get a `.tpl` suffix* dans le kit — ne redevine pas la règle :
 - **BASE** — `git -C KIT_ROOT show <sha-tamponné>:templates/<lang>/<chemin-mappé>`, normalisé.
 - **NOUVEAU** — `git -C KIT_ROOT show <NEW_SHA>:templates/<lang>/<chemin-mappé>`, normalisé. Si le chemin n'existe pas à `NEW_SHA`, le kit l'a supprimé — signale-le comme "le kit a retiré ce fichier" plutôt que de l'ignorer silencieusement.
 - **MIEN** — le contenu réel actuel du fichier du projet, ou "absent" s'il n'a jamais été généré (non pertinent pour ce projet) ou a été supprimé.

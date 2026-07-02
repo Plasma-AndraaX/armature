@@ -2,11 +2,11 @@
 
 Où Claude (ou tout assistant IA travaillant sur ce dépôt) doit écrire les choses qui doivent survivre à une seule conversation.
 
-<!-- FULL-ONLY --> <!-- paragraphe du hook memory-block — à garder seulement si le hook a été activé au moment du bootstrap -->
+<!-- MEMORYHOOK-ONLY -->
 **La mémoire privée auto de Claude (`~/.claude/projects/<projet>/memory/`) est interdite sur ce projet** — tout ce qui mérite d'être retenu mérite d'être versionné, lisible par les autres contributeurs, et review-able en PR.
 
 Un hook `PreToolUse` dans `.claude/settings.json` bloque toute écriture sous le répertoire mémoire et renvoie ici.
-<!-- /FULL-ONLY -->
+<!-- /MEMORYHOOK-ONLY -->
 
 <!-- FULL-ONLY -->
 > **Voir aussi** : [`workflow.md`](workflow.md) — ce document dit *où* mettre les choses ; le workflow dit *quand* (cycle de vie ADR ↔ plan ↔ backlog, et où vont les points qui émergent en cours d'implémentation).
@@ -21,7 +21,7 @@ Un hook `PreToolUse` dans `.claude/settings.json` bloque toute écriture sous le
 | **Leçon technique non-évidente** (piège, contrainte d'outillage, subtilité de librairie) | [`docs/lessons-technical.md`](lessons-technical.md) | section datée |
 <!-- FULL-ONLY --> | **Incident / postmortem** (événement daté : chronologie, cause racine, actions de suivi) | [`docs/incidents/`](incidents/README.md) — un fichier par incident | ≠ leçon (`lessons-technical`), ≠ travail (`backlog`) | <!-- /FULL-ONLY -->
 | **Convention de style / nommage** observée ou déclarée | [`docs/coding-standards.md`](coding-standards.md) | une section par langage/module si hétérogène ; `/coding-standards` en propose selon la stack |
-| **Règle métier non-évidente** *(si ce projet a un `lessons-domain.md`)* | [`docs/lessons-domain.md`](lessons-domain.md) | section datée |
+| **Règle métier non-évidente** *(si ce projet a un `lessons-domain.md`)* | `docs/lessons-domain.md` (généré seulement si domaine métier riche) | section datée |
 | **État courant du système** (architecture, comment ça marche aujourd'hui) | [`docs/architecture.md`](architecture.md) | mise à jour quand le réel change |
 | **Setup / build / déploiement** | [`docs/operations.md`](operations.md) | |
 | **Nouvelle question fréquente** type « Question → Lire » | ajouter une ligne dans la table de [`CLAUDE.md`](../CLAUDE.md) | rester court — CLAUDE.md est l'index, pas le contenu |
