@@ -8,5 +8,6 @@ Index des ADR **du kit lui-même**, les plus récentes en premier. Chaque ADR es
 
 | # | Titre | Statut | Date | Plan compagnon |
 |---|---|---|---|---|
+| [0003](0003-commande-coding-standards.md) | Commande `/coding-standards` (conventions via source vivante) | accepted | 2026-07-02 | [plan](../plans/commande-coding-standards.md) |
 | [0002](0002-journal-incidents.md) | Journal d'incidents / postmortem (module `docs/incidents/`) | accepted | 2026-07-02 | [plan](../plans/2026-07-02-journal-incidents.md) |
 | [0001](0001-strategie-de-test.md) | Stratégie de test des projets bootstrapés (module `docs/testing.md`) | accepted | 2026-07-02 | [plan](../plans/2026-07-02-strategie-de-test.md) |

@@ -6,5 +6,6 @@ Index des plans d'implémentation **du kit lui-même**, les plus récents en pre
 
 | Plan | ADR liée | Statut | Réglé le |
 |---|---|---|---|
+| [commande-coding-standards.md](commande-coding-standards.md) | [ADR 0003](../adr/0003-commande-coding-standards.md) | in-progress | — |
 | [2026-07-02-journal-incidents.md](2026-07-02-journal-incidents.md) | [ADR 0002](../adr/0002-journal-incidents.md) | implemented | 2026-07-02 |
 | [2026-07-02-strategie-de-test.md](2026-07-02-strategie-de-test.md) | [ADR 0001](../adr/0001-strategie-de-test.md) | implemented | 2026-07-02 |
