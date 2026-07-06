@@ -79,14 +79,16 @@ Techniquement faisable et léger. Écarté *pour l'instant* : aucun besoin addit
 
 ## Questions ouvertes
 
-- **Q1 — Faut-il vraiment le Lot 3 ?** : à trancher à l'usage. Si un run de `new-adr` sur un projet à conventions marquées les respecte déjà (parce qu'auto-chargées), le Lot 3 est cosmétique. ~~Bloquant~~ non — laissé optionnel.
+- ~~**Q1 — Faut-il vraiment le Lot 3 ?**~~ **Résolue (2026-07-06) : non.** `new-adr` consulte déjà `docs/prefs` pour le commit ; `CLAUDE.md` + `docs/prefs` étant auto-chargés, le modèle voit déjà les conventions du projet en rédigeant l'ADR. Éditer une skill *partagée* pour ce nudge la bloaterait sans gain démontré → **Lot 3 non retenu**.
 - **Q2 — Un tiers découvrira-t-il le tier (c) sans le Lot 2 ?** : c'est justement l'objet du Lot 2 (le rendre explicite dans `ADAPTING.md`).
 
 ## Progression
 
 | Lot | SHA | Date | Notes |
 |---|---|---|---|
-| Lot 1 — geler la décision | `—` | 2026-07-06 | commit d'ouverture ADR+plan |
+| Lot 1 — geler la décision | `bb9b3d5` | 2026-07-06 | commit d'ouverture ADR+plan+index+backlog |
+| Lot 2 — bénir l'override (c) | `—` | 2026-07-06 | section « Personnaliser une commande du plugin » dans `ADAPTING.md` |
+| Lot 3 — généraliser « défère aux conventions » | *non retenu* | 2026-07-06 | cosmétique (auto-chargement suffit) — voir Q1 |
 
 ## Follow-ups surfacés pendant l'implémentation
 
@@ -95,13 +97,14 @@ Techniquement faisable et léger. Écarté *pour l'instant* : aucun besoin addit
 ## Journal de décisions
 
 - **2026-07-06** — Choix de **geler le modèle en ADR** plutôt que de laisser la réflexion ouverte : la trouvaille « le tier (a) est déjà porté par `CLAUDE.md` + `docs/prefs`, auto-chargés » **tranche** la question qui était ouverte (« faut-il un nouveau mécanisme ? » → non). La décision fige aussi un « non » (pas d'overlay tier b) à la manière de l'ADR 0005.
+- **2026-07-06** — **Lot 3 non retenu.** Même logique anti-bloat que l'ADR : une skill partagée ne gagne pas à être alourdie pour un nudge que l'auto-chargement rend déjà effectif. La liberté d'ajouter « défère aux conventions du projet » reste ouverte pour le jour où une skill le *démontre*.
 
 ## Prochaines actions
 
 - [x] Lot 1 — ADR 0006 + plan + index + reclassement backlog + CLAUDE.md + CHANGELOG.
-- [ ] Lot 2 — paragraphe « override légitime » dans `ADAPTING.md`.
-- [ ] Lot 3 (optionnel) — généraliser « défère aux conventions du projet » dans `new-adr`.
-- [ ] Lot 4 — *gated future*, ne rien faire avant le déclencheur.
+- [x] Lot 2 — section « Personnaliser une commande du plugin » dans `ADAPTING.md`.
+- [x] Lot 3 (optionnel) — **évalué, non retenu** (auto-chargement suffit ; cf. Q1 / journal).
+- [ ] Lot 4 — *gated future*, ne rien faire avant le déclencheur (customisation additive légère récurrente).
 
 ---
 

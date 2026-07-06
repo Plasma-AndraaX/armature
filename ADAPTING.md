@@ -48,7 +48,7 @@ Le kit fournit un module générique (`docs/changelog/` + `/armature:changelog-c
 - la **publication** effective (site de doc, in-app, mailing list) — spécifique à chaque produit ;
 - un format de sortie imposé — adapte `/armature:changelog-draft` à ta convention (Keep a Changelog, GitHub Releases, autre).
 
-Si tu as besoin de traduction multi-locale, inspire-toi de la doctrine Holoon (Markdown versionné dans le repo plutôt qu'un CMS externe) et étends `/armature:changelog-draft` toi-même.
+Si tu as besoin de traduction multi-locale, inspire-toi de la doctrine Holoon (Markdown versionné dans le repo plutôt qu'un CMS externe) et **override** `/armature:changelog-draft` par une commande locale (voir § « Personnaliser une commande du plugin »).
 
 ## Plugins / MCP suggérés au bootstrap
 
@@ -78,6 +78,14 @@ Le gate (arbre dirty + rien capturé) est une heuristique, pas une garantie — 
 `docs/coding-standards.md` (au même titre que `architecture.md`/`operations.md`) est l'endroit où vit le style de code réellement observé — pas une simple ligne dans `CLAUDE.md`, précisément parce qu'un codebase peut être hétérogène (plusieurs langages, dérive entre sous-projets, legacy vs code récent). Le skill l'écrit à partir de Phase 2 : un échantillonnage de fichiers réels, pas seulement la config du linter.
 
 Si Phase 2 détecte un vrai conflit — la config déclare une convention mais une part significative du code ne la suit pas — elle ne tranche **pas** silencieusement. Elle te pose la question en Phase 3 : documenter la convention déclarée comme cible, documenter la convention dominante observée comme convention de fait, ou trancher toi-même. La réponse va dans la section « Déclaré vs observé » du fichier, datée. Si le codebase est homogène ou s'il n'y a pas de code existant, cette question ne se pose simplement pas.
+
+## Personnaliser une commande du plugin
+
+Les commandes sont des **skills du plugin** (`/armature:<nom>`), partagées entre tous tes projets et mises à jour via `/plugin update` — tu ne les édites pas en place. Trois niveaux pour les adapter à ton projet, du plus léger au plus lourd ([ADR 0006](docs/adr/0006-modele-extension-commandes.md)) :
+
+1. **Conventions transverses** (« pas de trailer co-auteur », Gitflow, `deciders` par défaut…) → rien de spécial à faire : mets-les dans `CLAUDE.md` (règle d'équipe) ou `docs/prefs/<login>.md` (préférence perso). Les deux sont **auto-chargés à chaque session**, donc les commandes les voient déjà — `new-adr`, `document-standards` et `dashboard` consultent même explicitement `docs/prefs` pour le style de commit.
+2. **Override complet** — quand une commande doit faire quelque chose de *franchement différent* (le `changelog-draft` multi-locale de Holoon, une détection couplée à ton code…), crée une commande locale `.claude/commands/<nom>.md`. Elle vit dans un **namespace distinct** (`/<nom>`, à côté de `/armature:<nom>`) : les deux coexistent sans conflit, et c'est un choix **légitime**, pas un pis-aller — le plugin ne cherche pas à tout absorber. Contrepartie assumée : une commande locale ne bénéficie pas des évolutions de la skill de base, à réserver donc aux cas où le comportement diverge vraiment.
+3. **Enrichissement additif léger** (ajouter juste quelques cibles/exemples de stack à une commande générique) : il n'existe **pas encore** de mécanisme d'overlay dédié — délibérément reporté tant que ce besoin ne devient pas récurrent (voir ADR 0006). En attendant, soit la convention passe par (1), soit tu bascules en override (2).
 
 ## Limite connue : pas de rétro-propagation
 
