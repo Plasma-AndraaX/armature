@@ -6,6 +6,7 @@ Index des plans d'implémentation **du kit lui-même**, les plus récents en pre
 
 | Plan | ADR liée | Statut | Réglé le |
 |---|---|---|---|
+| [modele-extension-commandes.md](modele-extension-commandes.md) | [ADR 0006](../adr/0006-modele-extension-commandes.md) | in-progress | — |
 | [post-plugin-simplification.md](post-plugin-simplification.md) | [ADR 0005](../adr/0005-simplifications-post-plugin.md) | in-progress | — |
 | [armature-plugin.md](armature-plugin.md) | [ADR 0004](../adr/0004-plugin-armature.md) | in-progress | — |
 | [2026-07-02-commande-coding-standards.md](2026-07-02-commande-coding-standards.md) | [ADR 0003](../adr/0003-commande-coding-standards.md) | implemented | 2026-07-02 |

@@ -10,7 +10,8 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Added
+- **ADR 0006 — command-extensibility model.** Settles how a consuming project customizes a plugin command without forking the whole command or editing the base (triggered by Holoon's 6 heavily-customized local commands): a 3-tier model **with no new machinery** — cross-cutting conventions ride on the already-auto-loaded `CLAUDE.md` + `docs/prefs/<login>.md` (the key finding: tier (a) already exists — both files are auto-loaded and three skills already consult `docs/prefs`), heavy divergence is a sanctioned namespace-distinct local override, and a per-command anchor-point overlay (tier b) is deliberately deferred with a wake trigger. Reclasses the `command-extension-mechanism.md` backlog reflection as settled; companion plan leaves two small follow-ups + the gated-future tier (b).
 
 ## [0.5.0] - 2026-07-06
 

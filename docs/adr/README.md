@@ -8,6 +8,7 @@ Index des ADR **du kit lui-même**, les plus récentes en premier. Chaque ADR es
 
 | # | Titre | Statut | Date | Plan compagnon |
 |---|---|---|---|---|
+| [0006](0006-modele-extension-commandes.md) | Modèle d'extensibilité des commandes du plugin (conventions auto-chargées + override assumé, overlay reporté) | accepted | 2026-07-06 | [plan](../plans/modele-extension-commandes.md) |
 | [0005](0005-simplifications-post-plugin.md) | Simplifications post-plugin (profil unique + fin de la sync projet↔kit) | accepted | 2026-07-04 | [plan](../plans/post-plugin-simplification.md) |
 | [0004](0004-plugin-armature.md) | Distribuer Armature comme plugin Claude Code (`armature`) | accepted | 2026-07-04 | [plan](../plans/armature-plugin.md) |
 | [0003](0003-commande-coding-standards.md) | Commande `/coding-standards` (conventions via source vivante) | accepted | 2026-07-02 | [plan](../plans/2026-07-02-commande-coding-standards.md) |

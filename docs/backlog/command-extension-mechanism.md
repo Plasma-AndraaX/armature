@@ -40,8 +40,18 @@ Un fichier d'extension unique traiterait pareil **quatre natures** très différ
 
 **Piège central** : un overlay universel qui prétend tout couvrir finit aussi complexe et fragile que le fork qu'il voulait éviter. Les points d'ancrage n'ont de valeur que là où la variabilité est *prévisible* — d'où la nécessité du tier (c).
 
+## Trouvaille qui a tranché (2026-07-06) — le tier (a) existe déjà
+
+En inspectant le kit avant de proposer quoi que ce soit à construire, on constate que le tier (a) n'est **pas à bâtir** :
+
+- **`docs/prefs/<login>.md`** (perso) et **`CLAUDE.md`** (équipe) sont **auto-chargés par Claude à chaque session** → toute skill de base tournant dans le projet « voit » déjà ces conventions, sans mécanisme de lecture dédié.
+- Le template `prefs/README` cite *explicitement* les exemples Holoon : « format des messages de commit, **souhait ou non de trailers co-auteur**, stratégie de branches ».
+- Trois skills (`new-adr`, `document-standards`, `dashboard`) **consultent déjà** `docs/prefs/<login>.md` (pour les conventions de commit).
+
+La proposition se réduit donc à : **(a) déjà là** (observation, pas décision) ; **(c) marche aujourd'hui** (namespace distinct, à bénir) ; **(b) seule vraie machinerie neuve**, sans déclencheur.
+
 ## Statut
 
-Réflexion **ouverte, pas tranchée**. Candidate à un **ADR 0006** — décision structurante sur le modèle d'extensibilité des commandes du plugin. Distincte de [`contribution-and-extension-model.md`](contribution-and-extension-model.md), qui traite des *dépôts satellites / overlays de templates* ; celle-ci traite de l'**extension des commandes par projet consommateur**.
+**Tranché le 2026-07-06 par [ADR 0006](../adr/0006-modele-extension-commandes.md)** (+ [plan compagnon](../plans/modele-extension-commandes.md)) : modèle d'extensibilité à 3 niveaux **sans nouvelle machinerie** — (a) conventions portées par les fichiers déjà auto-chargés, (c) override local assumé, (b) overlay à points d'ancrage **délibérément reporté**. Ce fichier est conservé comme **réflexion source**. Distinct de [`contribution-and-extension-model.md`](contribution-and-extension-model.md), qui traite des *dépôts satellites / overlays de templates*.
 
-**Déclencheur de construction** : un besoin concret de spécialiser une commande du plugin dans un projet *tout en gardant la base à jour*. Holoon en est le premier cas réel — pour l'instant résolu par override complet (ses commandes locales conservées). Le mécanisme (a)/(b) n'a de sens à construire que le jour où une personnalisation *additive légère* devient récurrente et pénible à maintenir à la main.
+**Déclencheur de réveil du tier (b)** : le jour où une personnalisation *additive légère* devient récurrente (≥ 2 projets) et pénible à maintenir à la main — l'override complet (c) étant alors trop lourd pour le besoin. Holoon reste couvert par override complet (ses commandes locales conservées).
