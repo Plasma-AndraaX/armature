@@ -6,7 +6,7 @@ Guidance for Claude Code sessions working **on this repo** (`Armature` itself). 
 
 A bilingual (`en`/`fr`) kit that bootstraps a Claude Code documentation/workflow environment (ADR↔plan↔backlog, `CLAUDE.md`, coding standards, optional changelog module) into any project, via the `/bootstrap` skill. See [`README.md`](README.md) for the user-facing pitch, [`ADAPTING.md`](ADAPTING.md) for the reasoning behind every non-obvious design choice.
 
-Current version: **0.6.0** (see [`CHANGELOG.md`](CHANGELOG.md)). Public at `github.com/Plasma-AndraaX/armature`.
+Current version: **0.6.1** (see [`CHANGELOG.md`](CHANGELOG.md)). Public at `github.com/Plasma-AndraaX/armature`.
 
 ## Structure
 

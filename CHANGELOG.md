@@ -10,6 +10,12 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [0.6.1] - 2026-07-08
+
+Three more overlay anchors on the two richest commands, surfaced while extracting Holoon's forks into overlays — so `changelog-draft` and `review-backlog` can de-fork faithfully rather than partially.
+
 ### Added
 - **Three more overlay anchors, surfaced by the Holoon de-fork exercise.** Extracting Holoon's 6 forks into overlays showed the two richest commands needed injection points the base didn't have: `changelog-draft` gains `review-additions` (inject project proposals — e.g. per-entry metadata flags — *during* the review pause, not at the end); `review-backlog` gains `readiness-classification` (the base's canonical-source-#1 referenced a "(mapping below)" it never shipped — the rubric→readiness-tier table is inherently project-specific) and `context-reprioritization` (project context-scan feeding 🔥 Hot-now). Documented in `ADAPTING.md`. The mechanism maturing from real use, exactly as the extend-first design intends.
 

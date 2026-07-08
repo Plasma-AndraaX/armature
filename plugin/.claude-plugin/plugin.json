@@ -1,6 +1,6 @@
 {
   "name": "armature",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Bootstrap and maintain a Claude Code documentation/workflow environment — CLAUDE.md, ADR↔plan↔backlog, coding standards — in any project. Commands are namespaced under /armature:.",
   "author": {
     "name": "Plasma-AndraaX",
