@@ -15,7 +15,7 @@ Les skills de base vivent sous `plugin/skills/<nom>/SKILL.md`, partagées, lues 
 
 ## Forme cible (à valider au Lot 1 — non figée)
 
-- **Overlay projet** : un fichier optionnel par commande, p. ex. `.claude/armature/<nom>.md`, avec une section par point d'injection (granularité à confirmer — un fichier à sections vs un fichier par hook, cf. Q1).
+- **Overlay projet** : **un fichier par commande** (Q1 résolue), à **`.claude/armature/<nom>.md`**, committé, avec une **section markdown par point d'injection** (`## before`, `## after`, `## <ancrage>`). Sous `.claude/` et namespacé par le plugin ; **jamais** `.claude/hooks/` (réservé aux hooks Claude Code natifs — concept distinct).
 - **Dispatch** : chaque skill de base commence par une clause — « si l'overlay projet existe, lis-le et applique ses injections aux points ci-dessous ; annonce *surcharge projet active* au démarrage ».
 - **Points d'injection = deux granularités d'un même mécanisme** (un point identifié + un bloc projet qui le remplit) :
   - **Hooks lifecycle — la forme dominante** : `before` / `after` / `end` (et éventuels `before-<phase>`). **Universels** (toute commande en a, zéro prévoyance de l'auteur de la base) et **plus fiables** que l'injection mid-flow — un prepend/append est robuste pour le modèle, un *splice* au milieu l'est moins (dé-risque le bémol « dispatch mou », cf. Q3).
@@ -73,8 +73,8 @@ Les skills de base vivent sous `plugin/skills/<nom>/SKILL.md`, partagées, lues 
 
 ## Questions ouvertes
 
-- **Q1 — Chemin/granularité de l'overlay** : `.claude/armature/<nom>.md` **un fichier par commande à sections** (`## after`, `## before`, `## <ancrage>`) *vs* un fichier par hook (`new-adr-after.md`…) ? Penchant actuel : **un fichier par commande** (éviter l'éparpillement — 6 commandes × 3 hooks = 18 fichiers).
-- **Q2 — Déclaration des points d'injection** : les hooks lifecycle (`before`/`after`/`end`) sont-ils **implicites** (toute commande les expose) ou déclarés ? Comment la base *nomme* ses ancrages mid-flow et comment l'overlay cible chaque point sans ambiguïté.
+- ~~**Q1 — Chemin/granularité de l'overlay**~~ **Résolue (2026-07-08) : un fichier par commande, à `.claude/armature/<nom>.md`** (sections `## before` / `## after` / `## <ancrage>`), committé. Sous `.claude/` (config Claude Code), namespacé par le plugin → pattern réutilisable `.claude/<plugin>/<commande>.md`. **NB : surtout pas `.claude/hooks/`** — réservé aux vrais hooks Claude Code (`settings.json`), concept distinct de nos sections d'injection prompt-level.
+- **Q2 — Déclaration des points d'injection** *(proposition de tête, à valider au Lot 1)* : **une seule syntaxe — des sections markdown dans l'overlay, le nom de la section décide de la nature.** `before`/`after` = **noms réservés à position implicite** (hooks universels, zéro déclaration côté base). Tout autre `## <id>` = un **ancrage mid-flow** que la base a déclaré inline (`[ancrage projet : <id>]`). Section qui ne matche ni un nom réservé ni un ancrage déclaré → **ignorée** (à flagger, cf. Q4). Élégance : `before`/`after` sont des ancrages à nom réservé + position implicite → un seul mécanisme.
 - **Q3 — Fiabilité du dispatch mou** : à quel point la base « bave »-t-elle dans l'injection ? — **le Lot 1 tranche**.
 - **Q4 — Lint** : faut-il un check qui valide que les ancrages ciblés par un overlay existent bien dans la base (éviter les overlays silencieusement ignorés) ?
 
@@ -91,6 +91,7 @@ Les skills de base vivent sous `plugin/skills/<nom>/SKILL.md`, partagées, lues 
 ## Journal de décisions
 
 - **2026-07-08** — Ouverture. Trois choix de cadrage validés par l'utilisateur : **direction seule** dans l'ADR (design au plan) ; **localisation hors scope** (Lot 4 gated) ; **extend seul** (pas de mode replace). Fondé sur le diagnostic des 6 commandes Holoon (5 extensions + 1 hybride, 0 remplacement).
+- **2026-07-08** — **Q1 résolue** (un fichier par commande, `.claude/armature/<nom>.md`, committé) et **Q2 proposée** (sections markdown ; `before`/`after` réservés à position implicite + ancrages nommés déclarés par la base ; un seul mécanisme). Piège de vocabulaire acté : nos « hooks » ≠ les hooks Claude Code de `settings.json` → stockage sous `armature/`, pas `hooks/`.
 - **2026-07-08** — **Modèle « hooks + ancrages » retenu comme direction de design** (idée utilisateur, affine le « points d'ancrage nommés » de l'ADR sans le contredire). Points d'injection à deux granularités : **hooks lifecycle** (`before`/`after`/`end`) universels et *plus fiables* (prepend/append > splice) comme forme **dominante**, + **ancrages nommés mid-flow** pour les trous sémantiques précis. Motivé par le diagnostic : la majorité des extensions Holoon (`changelog-draft`, `dashboard`) sont des étapes *après* le cœur = hooks `after` propres ; le mid-flow est la minorité. Le Lot 1 prototype **les deux** pour comparer fiabilité et ergonomie.
 
 ## Prochaines actions
