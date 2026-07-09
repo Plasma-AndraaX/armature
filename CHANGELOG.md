@@ -10,7 +10,11 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Fixed
+- **The `SessionEnd` capture hook could die with "Hook cancelled" on quit.** A `SessionEnd` hook that does slow work synchronously (`git status`, `grep` over the transcript, a transcript-wait `sleep`) gets cancelled when the CLI shuts down before it finishes — most visible on slow filesystems (WSL2 `/mnt/c`). `tools/session-end-capture.sh` now reads the payload then immediately detaches all the slow work into a `setsid` copy of itself, returning control in < 1s so it's never cancelled. The `auto` path was actually the most exposed — its synchronous gate even included a `sleep` waiting for the transcript.
+
+### Changed
+- **The session-end reminder moves from the `SessionEnd` hook to `claude.sh`; auto-capture becomes the bootstrap default.** A `SessionEnd` hook runs without a controlling terminal, so its stdout is never shown to the user — the old `message` mode's reminder banner never actually reached anyone. The "uncommitted work — remember to capture" nudge now lives in `claude.sh` (the wrapper owns the TTY and prints it once the session ends) and is **unconditional**. The hook's `message` mode is removed; `session-end-capture.sh` keeps only the headless `auto` capture (which still needs the `SessionEnd` payload's `transcript_path`, so that stays a hook — just detached now). The bootstrap Phase 3 question goes from {off / message / auto} to **{off / auto}, default `auto`**. See the new lesson in `docs/lessons-technical.md`.
 
 ## [0.6.1] - 2026-07-08
 

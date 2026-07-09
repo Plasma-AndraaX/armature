@@ -2,6 +2,17 @@
 
 Pièges non-évidents rencontrés en développant/distribuant le kit, qu'on ne peut pas reconstituer en lisant le code. Ajout **en tête** (append-only) ; une leçon invalidée est *superseded* (pas réécrite), son corps conservé en blockquote. Voir aussi `docs/testing.md` (dogfooding) et `CHANGELOG.md` (releases).
 
+## Un hook `SessionEnd` ne peut pas parler à l'utilisateur — et se fait annuler s'il est lent
+
+Deux propriétés non-évidentes des hooks `SessionEnd` de Claude Code, apprises en debuggant un « Hook cancelled » à la sortie (sur un projet bootstrappé, en WSL2 `/mnt/c`) :
+
+- **Son stdout n'est jamais affiché.** Les hooks tournent « without controlling terminal » et `SessionEnd` est non-bloquant : sa sortie et son code retour sont ignorés. Donc tout design qui compte sur un hook `SessionEnd` pour *afficher un bandeau* à l'utilisateur est mort-né — c'était exactement le cas du mode `message` de notre hook de capture : le bandeau ne s'imprimait jamais. Un message visible doit venir d'un process qui possède le TTY : le wrapper `claude.sh` (après la session), ou le `SessionStart` suivant (qui, lui, injecte du contexte).
+- **Ce n'est pas un timeout, c'est une annulation à l'extinction.** Le budget par défaut d'un hook `command` est 600 s et `SessionEnd` n'a pas de budget réduit — donc « Hook cancelled » ≠ « Hook timed out ». Au moment où le CLI s'éteint, il **n'attend pas** que le hook finisse : un hook qui fait du travail lent SYNCHRONE (`git status`, `grep` sur le transcript, `sleep`) est coupé en plein milieu, surtout sur FS lent. Parade : lire le payload puis détacher immédiatement tout le travail lent (`setsid` sur une copie du script) et faire `exit 0` en < 1 s ; le travail détaché, réparenté à init, finit tranquillement (il n'a le droit d'écrire que des fichiers, pas l'écran — cf. point précédent).
+
+Corollaire de design, appliqué au kit : **le rappel** (juste un `git status` + affichage) appartient à `claude.sh` ; **la capture** (a besoin du `transcript_path`, que seul le payload `SessionEnd` fournit) reste un hook `SessionEnd`, mais détaché. Le mode `message` du hook a donc été supprimé, et l'`auto` durci.
+
+_Captured 2026-07-09._
+
 ## Publier une version du plugin et la faire *prendre* chez un consommateur : la mécanique piégeuse
 
 Au moment de couper une release Armature puis de la faire tourner sur un projet consommateur (p. ex. Holoon), quatre pièges non-devinables coûtent facilement une heure ou deux — et ils reviennent à **chaque** release :

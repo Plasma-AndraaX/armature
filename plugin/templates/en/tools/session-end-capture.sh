@@ -1,32 +1,52 @@
 #!/bin/bash
-# SessionEnd hook worker — conditional reminder or headless auto-capture.
-# Wired from .claude/settings.json as: bash tools/session-end-capture.sh <message|auto>
+# SessionEnd hook worker — headless capture (auto mode).
+# Wired from .claude/settings.json as: bash tools/session-end-capture.sh
 # Not meant to be run by hand (though harmless if you do — it'll just check the
 # gate and likely find nothing to do outside a real Claude Code SessionEnd call).
 #
-# Pattern credit: adapted from a validated personal workspace hook (recursion
-# guard, transcript-wait, byte-cap, mktemp runner with deferred prompt-file
-# substitution to dodge escaping issues, detached headless `claude -p`).
-# Hardened for a generic public kit: the headless run's --allowedTools excludes
-# Bash (Read/Edit/Write/Glob/Grep is enough to write lessons/changelog files),
-# and it never touches git — no commit, ever.
+# This worker does exactly ONE thing: spawn a detached `claude -p` that captures
+# lessons/changelog from the session transcript. The "uncommitted work" reminder no
+# longer runs here — a SessionEnd hook runs without a controlling terminal, so its
+# stdout is never shown to the user; that reminder now lives in `claude.sh`, which
+# owns the TTY.
+#
+# Key robustness point: a SessionEnd hook that does slow work (git, grep, transcript
+# I/O, `sleep`) SYNCHRONOUSLY gets cancelled when the CLI shuts down ("Hook
+# cancelled"), before doing anything. So we read the payload, relaunch a DETACHED
+# copy of this script (setsid), and return control immediately — all the slow work
+# happens in the detached copy, reparented to init.
+#
+# Pattern credit: adapted from a validated personal workspace hook (recursion guard,
+# transcript-wait, byte-cap, prompt-in-a-temp-file to dodge escaping issues, headless
+# `claude -p`). Hardened for a generic public kit: the headless run's --allowedTools
+# excludes Bash (Read/Edit/Write/Glob/Grep is enough to write lessons/changelog
+# files), and it never touches git — no commit, ever.
 
-MODE="${1:-message}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_FILE="$SCRIPT_DIR/session-end-capture.log"
 
-# --- Recursion guard: the headless run below sets this before it starts a
-# session of its own; if its own SessionEnd hook fires, this stops it cold. ---
+# --- Recursion guard: the headless run below sets this before it starts a session
+# of its own; if its own SessionEnd hook fires, this stops it cold. ---
 if [ -n "$CLAUDE_HOOK_SPAWNED" ]; then
     exit 0
 fi
 
+# --- Immediate detach: return control to the CLI in < 1s so we're never cancelled.
+# We read the payload (it comes from a pipe, must be consumed now) then relaunch a
+# detached copy of this script that does all the slow work. ---
+if [ -z "$CLAUDE_CAPTURE_DETACHED" ]; then
+    PAYLOAD=$(cat)
+    printf '%s' "$PAYLOAD" | CLAUDE_CAPTURE_DETACHED=1 setsid bash "$0" >/dev/null 2>&1 &
+    exit 0
+fi
+
+# ===================== from here on: detached worker =====================
 PAYLOAD=$(cat)
 TRANSCRIPT=$(echo "$PAYLOAD" | jq -r '.transcript_path // ""' 2>/dev/null)
 SESSION_CWD=$(echo "$PAYLOAD" | jq -r '.cwd // ""' 2>/dev/null)
 SESSION_CWD="${SESSION_CWD:-$SCRIPT_DIR/..}"
 
-echo "--- session-end-capture ($MODE) at $(date '+%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
+echo "--- session-end-capture (auto) at $(date '+%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
 
 if [ -z "$TRANSCRIPT" ]; then
     echo "No transcript_path in payload, exiting." >> "$LOG_FILE"
@@ -53,26 +73,7 @@ if { [ "$DIRTY" = false ] && [ "$WROTE_SOMETHING" = false ]; } || [ "$ALREADY_CA
     exit 0
 fi
 
-echo "Gate met (dirty=$DIRTY wrote=$WROTE_SOMETHING) — mode=$MODE" >> "$LOG_FILE"
-
-# --- Mode: message — just print a visible reminder, no automation. ---
-if [ "$MODE" = "message" ]; then
-    cat <<'EOF'
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This session has uncommitted work that doesn't look captured yet.
-Run `./claude.sh --continue` to resume it, then `/armature:capture-lessons`
-and (if this project uses it) `/armature:changelog-capture`.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EOF
-    exit 0
-fi
-
-# --- Mode: auto — spawn a detached headless Claude to do the capture itself. ---
-if [ "$MODE" != "auto" ]; then
-    echo "Unknown mode '$MODE', treating as message-only (no reminder printed for this exit path)." >> "$LOG_FILE"
-    exit 0
-fi
+echo "Gate met (dirty=$DIRTY wrote=$WROTE_SOMETHING) — launching headless capture." >> "$LOG_FILE"
 
 # Wait briefly in case the transcript hasn't hit disk yet.
 if [ ! -f "$TRANSCRIPT" ]; then
@@ -88,9 +89,8 @@ fi
 
 MAX_BYTES=4194304  # cap to the last 4MB — cost/context control, not a hard requirement
 
-# Prompt goes in its own temp file so the runner script below can defer reading
-# it to execution time (`\$(cat "$PROMPT_FILE")`) instead of trying to inline
-# arbitrary prompt text into a shell command — sidesteps escaping entirely.
+# Prompt goes in its own temp file to avoid inlining arbitrary prompt text into a
+# shell command — sidesteps escaping entirely.
 PROMPT_FILE=$(mktemp /tmp/claude-session-capture-prompt-XXXXXX.md)
 cat > "$PROMPT_FILE" <<'PROMPT_EOF'
 You are running non-interactively, right after a Claude Code session ended in this
@@ -115,22 +115,17 @@ Hard rules:
   this pass") — this is logged for the user to read later.
 PROMPT_EOF
 
-RUNNER=$(mktemp /tmp/claude-session-capture-runner-XXXXXX.sh)
-cat > "$RUNNER" <<RUNNER_EOF
-#!/bin/bash
+# We're already detached (setsid at the top): no need for a nested runner, we run
+# claude -p directly. The recursion guard keeps its own SessionEnd from re-launching
+# another capture.
 export CLAUDE_HOOK_SPAWNED=1
 cd "$SESSION_CWD" || exit 0
-tail -c $MAX_BYTES "$TRANSCRIPT" | claude -p "\$(cat "$PROMPT_FILE")" \\
-    --allowedTools "Read Edit Write Glob Grep" \\
-    --permission-mode acceptEdits \\
+tail -c "$MAX_BYTES" "$TRANSCRIPT" | claude -p "$(cat "$PROMPT_FILE")" \
+    --allowedTools "Read Edit Write Glob Grep" \
+    --permission-mode acceptEdits \
     >> "$LOG_FILE" 2>&1
-echo "claude -p finished with code: \$?" >> "$LOG_FILE"
+echo "claude -p finished with code: $?" >> "$LOG_FILE"
 echo "--- end session-end-capture (auto) ---" >> "$LOG_FILE"
-rm -f "$PROMPT_FILE" "$RUNNER"
-RUNNER_EOF
-chmod +x "$RUNNER"
-
-setsid bash "$RUNNER" </dev/null &>/dev/null &
-echo "Headless capture launched in background (pid: $!)" >> "$LOG_FILE"
+rm -f "$PROMPT_FILE"
 
 exit 0

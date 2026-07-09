@@ -26,4 +26,28 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
-exec claude "$@"
+# On ne fait PAS d'exec : le wrapper doit reprendre la main quand la session se
+# termine, pour afficher le rappel ci-dessous. Un hook SessionEnd ne le peut pas
+# (il tourne sans terminal de contrôle — son stdout n'est jamais montré) ; ce
+# wrapper, lui, possède le TTY.
+set +e
+claude "$@"
+rc=$?
+set -e
+
+# Rappel de fin de session : s'il reste du travail non commité, penser à capturer
+# avant de commiter. Ça vit ici (et pas dans un hook) parce que le wrapper possède
+# l'écran.
+if git -C "$DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+   && [ -n "$(git -C "$DIR" status --porcelain 2>/dev/null)" ]; then
+  cat <<'EOF'
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Travail non commité dans ce projet.
+Avant de commiter, pense à capturer ce qui le mérite :
+  /armature:capture-lessons  (et /armature:changelog-capture si le projet l'utilise)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EOF
+fi
+
+exit "$rc"

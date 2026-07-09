@@ -25,4 +25,26 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
-exec claude "$@"
+# We deliberately don't `exec`: the wrapper must regain control when the session
+# ends so it can print the reminder below. A SessionEnd hook can't (it runs with no
+# controlling terminal, so its stdout is never shown); this wrapper owns the TTY.
+set +e
+claude "$@"
+rc=$?
+set -e
+
+# End-of-session nudge: if there's uncommitted work, remind to capture before
+# committing. This lives here (not in a hook) because the wrapper owns the screen.
+if git -C "$DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+   && [ -n "$(git -C "$DIR" status --porcelain 2>/dev/null)" ]; then
+  cat <<'EOF'
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Uncommitted work in this project.
+Before you commit, consider capturing what's worth it:
+  /armature:capture-lessons  (and /armature:changelog-capture if this project uses it)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EOF
+fi
+
+exit "$rc"
