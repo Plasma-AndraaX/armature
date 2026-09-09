@@ -10,6 +10,12 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [0.7.0] - 2026-09-09
+
+The bootstrap stops assuming the useful context lives in the repo: a new harvest phase mines the current conversation, the documents the user names outside the repo, and the git history before generating — so `lessons-technical.md`, `docs/backlog/` and `docs/adr/` no longer ship structurally empty (ADR 0008). Plus the `SessionEnd` capture hook's two real-world failures, fixed.
+
 ### Added
 - **The bootstrap now harvests the context that isn't in the code (new Phase 3).** `/armature:bootstrap` assumed everything useful lived in the repo — the word "transcript" appeared once in the whole skill, and only for the *future* sessions' `SessionEnd` hook. So `docs/lessons-technical.md`, `docs/backlog/` and `docs/adr/` shipped structurally empty, while the material that belongs there had usually just been said in the current conversation or already lived in a note outside the repo. A real bootstrap (2026-09-09, ~900-line Node project) produced 3 ADRs, 6 lessons and 8 backlog items — all written by hand afterwards, none of which the skill would have produced. A new **Phase 3** now mines three sources before generating: the **current conversation** (richest, and the only one lost if not captured now), **documents outside the repo the user names** (it asks — it never goes hunting), and **git history**. Four guards are frozen by ADR 0008: propose-never-write-silently (shortlist by destination, confirmed item by item, with the filtered-out tail shown), the `capture-lessons` relevance bar unchanged (> 30 min for the next person, true regardless of the reader), opportunistic-not-mandatory (nothing to harvest ⇒ one line and move on, a fresh-session bootstrap stays as fast as before), and ADRs only for decisions **visibly already settled and argued** — `status: accepted` and dated, never an empty `proposed`. Phases 3-6 renumbered to 4-7; no template touched (`en`/`fr` parity intact). See ADR 0008 + its companion plan, and `ADAPTING.md` § *Matière hors-code au bootstrap*.
 
