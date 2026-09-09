@@ -5,3 +5,4 @@ __pycache__/
 
 # Worktrees d'agents (jetables, jamais versionnés)
 .claude/worktrees/
+tools/session-end-capture.log

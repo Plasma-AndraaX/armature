@@ -1,5 +1,15 @@
 {
   "permissions": {
     "allow": []
+  },
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/tools/session-end-capture.sh\"" }
+        ]
+      }
+    ]
   }
 }

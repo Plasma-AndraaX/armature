@@ -40,6 +40,15 @@ Si/quand la plateforme (ou une convention Armature) le permet : un troisième é
 ### C — Exception d'orchestration entre commandes
 Autoriser qu'une commande **explicitement lancée par l'utilisateur** en chaîne une autre marquée `disable-model-invocation`. Suppose un mécanisme de « contexte d'orchestration » que le frontmatter binaire actuel ne connaît pas — donc probablement hors de portée sans support plateforme. La piste A l'émule déjà fonctionnellement (l'orchestrateur suit la commande inline).
 
+## Angle voisin, confirmé par le run du 2026-09-09 : les commandes sont stériles hors interactif
+
+Le premier run end-to-end de `/armature:bootstrap` (agent frais, worktree isolé — voir [`appliquer-armature-a-armature.md`](appliquer-armature-a-armature.md)) a montré que le trou est plus large que le seul `disable-model-invocation` :
+
+- **`AskUserQuestion` n'existe ni pour un sous-agent, ni en `claude -p`.** Ce n'est pas nouveau (`first-real-run-findings.md` le notait déjà), mais la **Phase 3** du bootstrap (récolte, [ADR 0008](../adr/0008-recolte-contexte-bootstrap.md)) le rend structurant : sa source 2 (« demander à l'utilisateur ses documents hors repo ») est purement inexécutable, et sa garde « proposer, jamais écrire en silence » rend la phase **incapable de produire un seul fichier** sans canal interactif. Le run a lu 60 commits pour zéro écriture — comportement *correct* au regard de la garde, mais coût réel pour bénéfice nul.
+- **`${CLAUDE_PLUGIN_ROOT}` n'est pas toujours défini.** La Phase 1 affirme « provided by Claude Code […] no env var to set » ; c'est faux pour un sous-agent, pour `claude -p`, et pour le lancement `--plugin-dir` **que le kit prescrit lui-même** pour le dogfooding. Aucun repli n'est documenté ; le run a dû s'en inventer un.
+
+La question commune aux deux : **que doit faire une commande Armature quand elle tourne sans utilisateur au bout du fil ?** Trois réponses possibles, à trancher avec les pistes A/B/C ci-dessus plutôt que séparément : refuser proprement et le dire, dégrader vers un mode « propose en sortie, n'écrit rien » (ce que le run a fait spontanément), ou accepter un cahier de réponses fourni à l'avance. Le sujet est le même que celui de l'orchestration : une commande conçue pour un humain interactif, invoquée dans un contexte qui n'en a pas.
+
 ## Statut
 
 **Ouvert, candidat à un futur ADR** qui réviserait la politique uniforme `disable-model-invocation` de la bascule plugin ([ADR 0004](../adr/0004-plugin-armature.md)), dans la lignée du travail d'extensibilité ([ADR 0006](../adr/0006-modele-extension-commandes.md), [0007](../adr/0007-mecanisme-extension-tier-b.md)).

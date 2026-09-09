@@ -1,6 +1,6 @@
 # Appliquer Armature à Armature (dogfooding complet)
 
-**État** : pas tranché. Question récurrente, posée à nouveau le 2026-09-09.
+**État** : **piste (A') appliquée le 2026-09-09** après un run réel de la piste (B). Le reste (copie doctrinale de `workflow.md`/`persistence-strategy.md`) reste écarté ; ce fichier est conservé comme trace du diagnostic et du verdict.
 
 Le kit dogfoode **la moitié** de ce qu'il génère. Le diagnostic ci-dessous est daté du 2026-09-09 (v0.7.0) — inventaire des 26 fichiers que `plugin/templates/en/` produit, confrontés à ce que le repo possède réellement.
 
@@ -42,7 +42,19 @@ Le kit n'a **qu'une seule vérification automatique** (`tools/lint-templates.py`
 - **`merge`, pas génération.** `CLAUDE.md` existe déjà et est **riche** (§ *Where things stand*, conventions de travail). Phase 0 imposerait le chemin `merge` et un arbitrage fichier par fichier — ce n'est pas un bootstrap, c'est une fusion manuelle assistée.
 - Une partie des fichiers seraient des coquilles à moitié vides sur un repo qui n'est pas une application (`prefs`, `.env.claude.example`).
 
-## Pistes
+## Ce qui a été fait le 2026-09-09
+
+La piste (B) a été **exécutée pour de vrai** — `/armature:bootstrap` suivi à la lettre par un agent frais dans un worktree isolé, avec interdiction d'écraser l'existant (candidats en collision déviés vers `.bootstrap-candidate/`). Verdict : **le bootstrap complet n'est pas la bonne forme** pour ce repo (frictions F2 et F3 ci-dessous), mais le run a payé immédiatement — il a mis au jour un **bug de rendu en production** (une ligne de tableau gatée soudait le tableau au bloc suivant, dans tout projet bootstrapé sans changelog ; linter vert parce qu'il partageait le défaut).
+
+**Rapatrié** (piste A élargie) : `tools/generate-dashboard.py` (vérifié : `/armature:dashboard` fonctionne désormais sur ce repo — 8 ADR, 8 plans), `tools/session-end-capture.sh` **et son hook `SessionEnd` câblé** dans `.claude/settings.json` (le kit exerce enfin son propre hook, dont la 0.7.0 avait corrigé deux pannes à l'aveugle), `docs/operations.md` (la séquence de release, qui n'existait que comme piège capturé), `docs/architecture.md`, `docs/coding-standards.md`.
+
+**Non rapatrié, délibérément** : `workflow.md` et `persistence-strategy.md` (la copie doctrinale qui dériverait du gabarit — le coût identifié plus haut) ; `claude-code-tooling.md`, `docs/prefs/`, `.env.claude.example`, `docs/README.md` (peu ou pas de contenu utile ici) ; les 9 candidats en collision (`CLAUDE.md`, `claude.sh`, les index et docs existants), l'existant étant meilleur que le gabarit.
+
+**Non appliqué, laissé au choix de l'utilisateur** : le **hook mémoire** (`PreToolUse`). Le kit le recommande fortement et ne se l'applique toujours pas — mais l'activer change le comportement des sessions futures sur ce repo, ce qui est une décision d'usage, pas de dogfooding.
+
+**Frictions du skill relevées par le run** : F1 (le bug ci-dessus) corrigée ; F2 (`claude.sh` écrasé sans condition), F3 (le mode `merge` de la Phase 0 n'était outillé nulle part), F4 (la Phase 3 supposait une cible vierge), F6 (grep TODO ininterprétable sur un repo de gabarits), F7 (« never ship bare » poussant à inventer un plugin) corrigées dans le skill. F5 et F10 (exécution sans canal interactif) versées à [`orchestrated-command-invocation.md`](orchestrated-command-invocation.md).
+
+## Pistes (état au moment de l'arbitrage)
 
 - **(A) Ciblé, sans bootstrap** — n'ajouter que ce qui a une valeur démontrée *aujourd'hui* : les deux scripts `tools/` (auto-capture + dashboard) et `docs/operations.md`. Zéro doublon doctrinal, gain immédiat, réversible.
 - **(B) Bootstrap réel en mode `merge`** — faire tourner `/armature:bootstrap` sur ce repo par un agent frais et arbitrer fichier par fichier. Le plus instructif (c'est aussi le test end-to-end du skill qui manque, et le premier exercice réel de la Phase 3 de récolte), le plus risqué pour l'existant.

@@ -19,6 +19,8 @@ Current version: **0.7.0** (see [`CHANGELOG.md`](CHANGELOG.md)). Public at `gith
 - `docs/adr/` + `docs/plans/` — the kit's own decision records and companion plans. Since 2026-07-02 the kit dogfoods its own ADR ↔ plan machinery (format points at `plugin/templates/fr/docs/adr|plans/template.md` rather than duplicating it).
 - `docs/testing.md` — how the kit is tested (lint + manual end-to-end run of the 3 skills). `tools/lint-templates.py` stays the only automated check.
 - `docs/incidents/` — postmortems of real-impact incidents hit while working on the kit.
+- `docs/architecture.md`, `docs/operations.md`, `docs/coding-standards.md` — the kit's own generated-doc modules, brought in from the 2026-09-09 self-bootstrap run (`operations.md` holds the release/publication sequence, previously only captured as a trap in `lessons-technical.md`).
+- `tools/generate-dashboard.py` — what `/armature:dashboard` calls; regenerates `docs/dashboard.html`. `tools/session-end-capture.sh` — the `SessionEnd` auto-capture hook, wired in `.claude/settings.json` so the kit exercises its own hook (its log is gitignored).
 
 ## Where things stand — read this first in a new session
 
