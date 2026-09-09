@@ -52,6 +52,8 @@ La piste (B) a été **exécutée pour de vrai** — `/armature:bootstrap` suivi
 
 **Non appliqué, laissé au choix de l'utilisateur** : le **hook mémoire** (`PreToolUse`). Le kit le recommande fortement et ne se l'applique toujours pas — mais l'activer change le comportement des sessions futures sur ce repo, ce qui est une décision d'usage, pas de dogfooding.
 
+Le rapport intégral de l'agent est conservé dans [`self-bootstrap-run-findings.md`](self-bootstrap-run-findings.md), comme celui du premier run l'est dans `first-real-run-findings.md`.
+
 **Frictions du skill relevées par le run** : F1 (le bug ci-dessus) corrigée ; F2 (`claude.sh` écrasé sans condition), F3 (le mode `merge` de la Phase 0 n'était outillé nulle part), F4 (la Phase 3 supposait une cible vierge), F6 (grep TODO ininterprétable sur un repo de gabarits), F7 (« never ship bare » poussant à inventer un plugin) corrigées dans le skill. F5 et F10 (exécution sans canal interactif) versées à [`orchestrated-command-invocation.md`](orchestrated-command-invocation.md).
 
 ## Pistes (état au moment de l'arbitrage)
