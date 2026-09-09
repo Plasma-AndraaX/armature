@@ -10,7 +10,8 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Fixed
+- **A gated last table row broke the table it closed, in every project bootstrapped without the changelog module.** Removing a `CHANGELOG-ONLY` block absorbed the blank line that followed it — correct for a standalone prose block framed by blanks on both sides, wrong for a **table row**, which is preceded by another row and not by a blank: the blank after the table was eaten and the next paragraph/heading got welded onto it. Four files × both languages (`CLAUDE.md`, `docs/README.md`, `docs/persistence-strategy.md`, `docs/claude-code-tooling.md`), in every render where the changelog module was declined. `strip_markers` now absorbs that trailing blank **only when the block was itself preceded by a blank line**, and `lint-templates.py` gains a **table-run-on check** (a table row followed by a non-blank, non-row, non-comment line) — the mirror of the existing blank-line-inside-a-table check, which only ever caught a blank too many, never one missing. Verified: the new check flags the old rendering and passes the new one. The same faulty rule was restated in the bootstrap skill's Phase 5 prose and in this repo's `CLAUDE.md` conventions — both corrected. Found by the first real end-to-end run of `/armature:bootstrap` against this repo itself; the linter had been green throughout because both implementations shared the defect.
 
 ## [0.7.0] - 2026-09-09
 

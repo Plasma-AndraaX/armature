@@ -82,9 +82,26 @@ def strip_markers(text, active_tags):
             text = re.sub(rf'(?m)[ \t]+<!-- /{tag}-ONLY -->[ \t]*$', '', text)
             text = text.replace(f'<!-- {tag}-ONLY -->', '').replace(f'<!-- /{tag}-ONLY -->', '')
         else:
-            # Drop the gated block, and absorb one blank line that followed it so the blank
-            # lines that framed the block on both sides don't collapse into a double blank.
-            text = re.sub(rf'[ \t]*<!-- {tag}-ONLY -->.*?<!-- /{tag}-ONLY -->[ \t]*\n?(?:[ \t]*\n)?', '', text, flags=re.DOTALL)
+            # Drop the gated block. Absorb one blank line that followed it ONLY when the block
+            # was itself preceded by a blank line — i.e. a standalone prose block, whose two
+            # framing blanks would otherwise collapse into a double blank. A gated *table row*
+            # is preceded by another table row, so absorbing the blank after it would weld the
+            # next paragraph/heading onto the table and break it.
+            pat = re.compile(rf'[ \t]*<!-- {tag}-ONLY -->.*?<!-- /{tag}-ONLY -->[ \t]*\n?', re.DOTALL)
+            blank = re.compile(r'[ \t]*\n')
+            pos = 0
+            while True:
+                mo = pat.search(text, pos)
+                if not mo:
+                    break
+                start, end = mo.span()
+                framed_by_blank = start == 0 or text[:start].endswith('\n\n')
+                if framed_by_blank:
+                    nb = blank.match(text, end)
+                    if nb:
+                        end = nb.end()
+                text = text[:start] + text[end:]
+                pos = start
     return text
 
 
@@ -100,6 +117,24 @@ def check_broken_tables(text):
     for i in range(len(lines) - 2):
         if lines[i].lstrip().startswith('|') and lines[i + 1].strip() == '' and lines[i + 2].lstrip().startswith('|'):
             problems.append(f'blank line inside table near: {lines[i][:60]!r}')
+    return problems
+
+
+def check_table_run_on(text):
+    """A table must be followed by a blank line, never welded straight onto the next
+    paragraph/heading. The mirror image of check_broken_tables: that one catches a blank
+    line too many *inside* a table, this one a blank line missing *after* it — the
+    fingerprint of a gated last table row whose trailing blank got absorbed on removal
+    (see strip_markers). An HTML comment right under a table is a template-authoring
+    idiom (an empty table's instructions), not a run-on."""
+    lines = text.split('\n')
+    problems = []
+    for i in range(len(lines) - 1):
+        cur, nxt = lines[i], lines[i + 1]
+        if (cur.lstrip().startswith('|') and nxt.strip()
+                and not nxt.lstrip().startswith('|')
+                and not nxt.lstrip().startswith('<!--')):
+            problems.append(f'table welded onto next block (missing blank line) near: {cur[:60]!r}')
     return problems
 
 
@@ -195,6 +230,8 @@ def check_rendering(errors):
                 # blank lines that would be false positives here.
                 if rel_str.endswith(('.md', '.md.tpl')):
                     for p in check_broken_tables(text):
+                        errors.append(f'{label}: {p}')
+                    for p in check_table_run_on(text):
                         errors.append(f'{label}: {p}')
                     for p in check_leading_space_tables(text):
                         errors.append(f'{label}: {p}')
