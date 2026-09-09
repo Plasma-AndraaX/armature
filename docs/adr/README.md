@@ -8,6 +8,7 @@ Index des ADR **du kit lui-même**, les plus récentes en premier. Chaque ADR es
 
 | # | Titre | Statut | Date | Plan compagnon |
 |---|---|---|---|---|
+| [0008](0008-recolte-contexte-bootstrap.md) | Récolter le contexte hors-code au bootstrap (conversation, documents externes, historique git) | accepted | 2026-09-09 | [plan](../plans/2026-09-09-recolte-contexte-bootstrap.md) |
 | [0007](0007-mecanisme-extension-tier-b.md) | Construire le mécanisme d'extension des commandes (tier b : overlay extend-first) | accepted | 2026-07-08 | [plan](../plans/2026-07-08-mecanisme-extension-tier-b.md) |
 | [0006](0006-modele-extension-commandes.md) | Modèle d'extensibilité des commandes du plugin (conventions auto-chargées + override assumé, overlay reporté) | accepted | 2026-07-06 | [plan](../plans/2026-07-06-modele-extension-commandes.md) |
 | [0005](0005-simplifications-post-plugin.md) | Simplifications post-plugin (profil unique + fin de la sync projet↔kit) | accepted | 2026-07-04 | [plan](../plans/post-plugin-simplification.md) |

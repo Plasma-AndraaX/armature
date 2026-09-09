@@ -11,7 +11,7 @@ Opening a PR is always welcome. Whether it gets merged depends on a simple test:
 
 ## Which files get a `.tpl` suffix
 
-A file under `plugin/templates/<lang>/` gets a `.tpl` suffix **iff** `/bootstrap`'s Phase 4 must do something to it at generation time — substitute a `{{PLACEHOLDER}}` and/or strip a `CHANGELOG-ONLY`/`MEMORYHOOK-ONLY` marker. Everything else is copied byte-for-byte and never gets the suffix: `claude.sh`, `.gitignore`, `.env.claude.example`, `docs/adr/template.md`, `docs/plans/template.md`, `docs/incidents/template.md`, `docs/changelog/_next.md`, `tools/session-end-capture.sh`. See Phase 4's file mapping in `plugin/skills/bootstrap/SKILL.md` for the authoritative, exhaustive list — don't restate or re-derive this rule elsewhere.
+A file under `plugin/templates/<lang>/` gets a `.tpl` suffix **iff** `/bootstrap`'s Phase 5 must do something to it at generation time — substitute a `{{PLACEHOLDER}}` and/or strip a `CHANGELOG-ONLY`/`MEMORYHOOK-ONLY` marker. Everything else is copied byte-for-byte and never gets the suffix: `claude.sh`, `.gitignore`, `.env.claude.example`, `docs/adr/template.md`, `docs/plans/template.md`, `docs/incidents/template.md`, `docs/changelog/_next.md`, `tools/session-end-capture.sh`. See Phase 5's file mapping in `plugin/skills/bootstrap/SKILL.md` for the authoritative, exhaustive list — don't restate or re-derive this rule elsewhere.
 
 ## Before opening a PR
 

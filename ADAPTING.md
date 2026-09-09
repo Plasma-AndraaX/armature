@@ -37,13 +37,13 @@ Le skill pose quand même la question (l'utilisateur reste décisionnaire), mais
 
 ## Backlog : dans ce repo ou dans un outil externe ?
 
-Le skill demande explicitement en Phase 3 où vit le backlog. Si l'équipe utilise déjà Jira/Trello/Notion/Linear/GitHub Issues, ne génère **pas** `docs/backlog/` — imposer un second système concurrent au premier crée de la confusion et personne ne le maintient. Dans ce cas, `docs/persistence-strategy.md` et les autres références à `docs/backlog/` sont ajustées pour nommer l'outil externe à la place.
+Le skill demande explicitement en Phase 4 où vit le backlog. Si l'équipe utilise déjà Jira/Trello/Notion/Linear/GitHub Issues, ne génère **pas** `docs/backlog/` — imposer un second système concurrent au premier crée de la confusion et personne ne le maintient. Dans ce cas, `docs/persistence-strategy.md` et les autres références à `docs/backlog/` sont ajustées pour nommer l'outil externe à la place.
 
 Cas particulier — **TODOs déjà présents dans le code existant** : si Phase 2 en détecte un nombre non-trivial, le skill propose (jamais automatiquement) de les trier en items de backlog au moment du bootstrap. En dehors de ce geste de migration ponctuel, les `TODO`/`FIXME` du code restent délibérément exclus comme source de backlog continue (cf. le skill `/armature:review-backlog`) — trop bruyants, jamais triés.
 
 ## Changelog utilisateur
 
-Le kit fournit un module générique (`docs/changelog/` + `/armature:changelog-capture` + `/armature:changelog-draft`, en option, question dédiée en Phase 3) : capture d'une note pendant que le contexte est frais, rédaction formatée au moment de la release. Ce que ce module **ne fournit pas**, volontairement :
+Le kit fournit un module générique (`docs/changelog/` + `/armature:changelog-capture` + `/armature:changelog-draft`, en option, question dédiée en Phase 4) : capture d'une note pendant que le contexte est frais, rédaction formatée au moment de la release. Ce que ce module **ne fournit pas**, volontairement :
 - la **traduction multi-langue** des notes (Holoon en a besoin, la plupart des projets non) ;
 - la **publication** effective (site de doc, in-app, mailing list) — spécifique à chaque produit ;
 - un format de sortie imposé — adapte `/armature:changelog-draft` à ta convention (Keep a Changelog, GitHub Releases, autre).
@@ -66,7 +66,7 @@ Deux gestes distincts, pas un choix exclusif :
 
 ## Capture en fin de session — message ou auto
 
-Un hook `SessionEnd` peut prévenir quand une session se termine avec du travail non capturé. Deux modes, choisis à la Phase 3 du bootstrap :
+Un hook `SessionEnd` peut prévenir quand une session se termine avec du travail non capturé. Deux modes, choisis à la Phase 4 du bootstrap :
 
 - **`message`** *(recommandé par défaut)* — affiche un rappel visible (mentionnant `claude.sh --continue`) si l'arbre git est sale et que rien dans le transcript ne montre que `/armature:capture-lessons`/`/armature:changelog-capture` ont déjà tourné. Coût nul si rien à signaler, humain toujours dans la boucle avant toute écriture.
 - **`auto`** — lance un `claude -p` headless détaché (`tools/session-end-capture.sh auto`) qui lit la fin du transcript, applique **les mêmes filtres** que les skills `/armature:capture-lessons`/`/armature:changelog-capture` du plugin (il en lit la doctrine plutôt que de la dupliquer), et écrit directement dans les fichiers concernés. Il ne commite **jamais** — la relecture humaine reste obligatoire, juste déplacée à la session suivante plutôt que supprimée. Outils autorisés restreints à `Read Edit Write Glob Grep` (pas de Bash), garde anti-récursion par variable d'environnement (`CLAUDE_HOOK_SPAWNED`), transcript capé à 4 Mo.
@@ -77,7 +77,21 @@ Le gate (arbre dirty + rien capturé) est une heuristique, pas une garantie — 
 
 `docs/coding-standards.md` (au même titre que `architecture.md`/`operations.md`) est l'endroit où vit le style de code réellement observé — pas une simple ligne dans `CLAUDE.md`, précisément parce qu'un codebase peut être hétérogène (plusieurs langages, dérive entre sous-projets, legacy vs code récent). Le skill l'écrit à partir de Phase 2 : un échantillonnage de fichiers réels, pas seulement la config du linter.
 
-Si Phase 2 détecte un vrai conflit — la config déclare une convention mais une part significative du code ne la suit pas — elle ne tranche **pas** silencieusement. Elle te pose la question en Phase 3 : documenter la convention déclarée comme cible, documenter la convention dominante observée comme convention de fait, ou trancher toi-même. La réponse va dans la section « Déclaré vs observé » du fichier, datée. Si le codebase est homogène ou s'il n'y a pas de code existant, cette question ne se pose simplement pas.
+Si Phase 2 détecte un vrai conflit — la config déclare une convention mais une part significative du code ne la suit pas — elle ne tranche **pas** silencieusement. Elle te pose la question en Phase 4 : documenter la convention déclarée comme cible, documenter la convention dominante observée comme convention de fait, ou trancher toi-même. La réponse va dans la section « Déclaré vs observé » du fichier, datée. Si le codebase est homogène ou s'il n'y a pas de code existant, cette question ne se pose simplement pas.
+
+## Matière hors-code au bootstrap (conversation, notes externes, historique git)
+
+Le bootstrap ne se contente pas de lire le code : sa **Phase 3** va aussi chercher ce qui n'y est pas ([ADR 0008](docs/adr/0008-recolte-contexte-bootstrap.md)). Au moment où tu bootstrappes, l'essentiel vient souvent d'être dit dans la conversation en cours, ou vit dans une note de projet hors du repo — et c'est précisément la matière de `lessons-technical.md`, `docs/backlog/` et `docs/adr/`, les trois répertoires qui sortaient sinon vides.
+
+Trois sources : la **conversation en cours** (la plus riche, et la seule qui disparaît si on ne la capture pas maintenant), les **documents hors repo que tu désignes** — le skill *demande*, il ne part pas fouiller ton disque — et l'**historique git** s'il y en a un.
+
+Ce qu'il faut en attendre, concrètement :
+- **Rien n'est écrit sans ton accord.** Tu vois une shortlist groupée par destination, avec la source de chaque item et ce qui a été écarté ; tu confirmes item par item.
+- **Le filtre est agressif, et c'est voulu.** Une conversation est majoritairement du bavardage : le critère de `lessons-technical.md` reste « ferait perdre plus de 30 min au prochain, et reste vrai indépendamment du lecteur ». Deux ou trois leçons, c'est une récolte normale ; une douzaine, c'est un filtre défaillant.
+- **Une ADR n'est créée que sur une décision déjà tranchée *et* argumentée** (les alternatives ont réellement été pesées) — en `status: accepted`, datée. Une décision encore en suspens est un item de backlog, pas une ADR `proposed` vide.
+- **L'étape se saute d'elle-même.** Session fraîche, pas d'historique, pas de note externe ⇒ une ligne et on passe. Un bootstrap sur projet neuf reste aussi rapide qu'avant.
+
+Si tu as une note de projet, des decision-records ou un `CLAUDE.md` de workspace englobant, garde leur chemin sous la main avant de lancer le bootstrap : c'est souvent là que vit déjà tout le « pourquoi » du projet.
 
 ## Personnaliser une commande du plugin
 
