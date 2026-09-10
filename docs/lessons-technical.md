@@ -2,6 +2,19 @@
 
 Pièges non-évidents rencontrés en développant/distribuant le kit, qu'on ne peut pas reconstituer en lisant le code. Ajout **en tête** (append-only) ; une leçon invalidée est *superseded* (pas réécrite), son corps conservé en blockquote. Voir aussi `docs/testing.md` (dogfooding) et `CHANGELOG.md` (releases).
 
+## Une install de plugin faite « juste pour un run » survit au run — et retombe sur le dépôt de dev
+
+Le 2026-09-09, pour faire tourner `/armature:bootstrap` dans un worktree isolé, Armature a été installé en scope **`user`** (et, 17 min plus tard, en scope `local` sur un répertoire d'overlay). Le worktree a disparu le jour même ; les installs, non. Pendant 24 h, le dépôt du kit a donc eu **deux** sources concurrentes pour les `/armature:*` : le snapshot en cache de l'install `user`, actif partout, et le `--plugin-dir ./plugin` de `./claude.sh`.
+
+La leçon du 2026-07-08 dit « ne pas installer le plugin *dans* ce repo ». Elle ne couvre pas ce cas-ci : l'install est faite **ailleurs**, pour autre chose, et retombe ici sans que personne ne l'ait décidé.
+
+- **Le scope `user` est global.** Il n'existe pas de répertoire où il ne s'applique pas — y compris le dépôt du kit, où toute la doctrine de dogfooding repose sur `--plugin-dir`.
+- **`claude plugin list` ne montre pas le plugin chargé par `--plugin-dir`** : il n'est pas dans le registre des installs. Ne rien voir d'anormal à l'écran ne prouve donc pas l'absence de coexistence.
+- **Il existe un `claude plugin disable <plugin> --scope project`**, qui écrit `"enabledPlugins": {"<plugin>@<marketplace>": false}` dans le `.claude/settings.json` du projet (donc versionnable). **Non tranché** : on n'a pas pu établir s'il épargne le plugin chargé par `--plugin-dir`. Un test en `-p` n'expose aucun skill de plugin *même sans* le réglage, donc il ne discrimine rien ; le test décisif est interactif.
+- **Parade retenue** : pas d'install permanente pour un besoin ponctuel. Désinstaller après le run (`claude plugin uninstall <plugin>@<marketplace> --scope user`) et réinstaller à la demande, plutôt que de masquer la coexistence par un réglage dont l'effet n'est pas démontré.
+
+_Captured 2026-09-10._
+
 ## Un hook `SessionEnd` ne peut pas parler à l'utilisateur — et se fait annuler s'il est lent
 
 Deux propriétés non-évidentes des hooks `SessionEnd` de Claude Code, apprises en debuggant un « Hook cancelled » à la sortie (sur un projet bootstrappé, en WSL2 `/mnt/c`) :
