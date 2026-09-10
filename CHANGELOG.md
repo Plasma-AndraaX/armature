@@ -10,6 +10,12 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
+_(nothing yet)_
+
+## [0.7.1] - 2026-09-10
+
+Armature finally runs the tooling it generates — dashboard, `SessionEnd` hook, `operations`/`architecture`/`coding-standards` docs — brought in by actually running `/armature:bootstrap` against this repo. That run is the whole release: it surfaced six frictions in the bootstrap skill and two defects that had been shipping into *every* bootstrapped project — a gated last table row breaking the table it closed, and the plan stub reported as an active plan on every run.
+
 ### Added
 - **The kit now runs its own generated tooling (partial self-bootstrap).** Armature dogfooded its *machinery* (ADR/plans/backlog/incidents) but none of the docs it generates, so `/armature:dashboard` was unusable on its own repo and `tools/session-end-capture.sh` — whose two failures 0.7.0 had just fixed — had never once run here. Brought in: `tools/generate-dashboard.py` (verified working: 8 ADRs, 8 plans), `tools/session-end-capture.sh` **with its `SessionEnd` hook wired** in `.claude/settings.json`, plus `docs/operations.md` (the release/publication sequence, previously only a captured trap), `docs/architecture.md` and `docs/coding-standards.md`. Deliberately **not** brought in: `workflow.md` and `persistence-strategy.md` — a second copy of the doctrine would drift from the template it's generated from. Decided by actually running the bootstrap (see Fixed/Changed below), not on paper.
 
