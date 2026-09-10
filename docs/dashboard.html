@@ -44,11 +44,11 @@
 
 <header>
   <h1>Armature — vue d'ensemble par tracks</h1>
-  <div class="subtitle">Chaque ADR forme un track : décision + plan compagnon + items de backlog qui la mentionnent. Vue <b>architecturale</b> — pour la <b>liste tactique priorisée</b>, utiliser <code>/armature:review-backlog</code>. État au 2026-09-09.</div>
+  <div class="subtitle">Chaque ADR forme un track : décision + plan compagnon + items de backlog qui la mentionnent. Vue <b>architecturale</b> — pour la <b>liste tactique priorisée</b>, utiliser <code>/armature:review-backlog</code>. État au 2026-09-10.</div>
   <div class="stats">
     <div class="stat"><strong>8</strong> ADR (8 accepted, 0 deferred)</div>
     <div class="stat"><strong>2</strong> plans in-progress · <strong>6</strong> implemented</div>
-    <div class="stat"><strong>8</strong> backlog liés à une ADR · <strong>0</strong> bundle(s) candidat(s) ADR · <strong>0</strong> en référence</div>
+    <div class="stat"><strong>11</strong> backlog liés à une ADR · <strong>0</strong> bundle(s) candidat(s) ADR · <strong>0</strong> en référence</div>
   </div>
   <div class="legend">Légende : <span class="badge" style="color:#16a34a;background:#dcfce7">Accepted</span> <span class="badge" style="color:#2563eb;background:#dbeafe">In progress</span> <span class="badge" style="color:#6b7280;background:#f3f4f6">Deferred</span> <span class="badge" style="color:#f59e0b;background:#fef3c7">Proposed</span></div>
 </header>
@@ -99,10 +99,11 @@
 <div class="track-col plan-block"><h4>Plan(s) compagnon(s)</h4>
 <div class="plan"><div class="title">Plan — Armature comme plugin `armature` (compagnon de l&#x27;ADR 0004)</div><div class="summary">Faire passer Armature du modèle « copie de fichiers dans chaque projet + KIT_ROOT résolu par chemin en dur » au modèle « plugin installé une fois, commandes namespacées /armature:…, templates lus depuis l&#x27;installation ». Contraintes : les commandes doivent marcher dans tout…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#2563eb;background:#dbeafe">In progress</span> <a class="file" href="plans/armature-plugin.md">armature-plugin.md</a></div></div>
 </div>
-<div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(2)</span></h4>
+<div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(3)</span></h4>
 <div class="backlog-list">
 <div class="backlog-item"><span class="title">Personnalisation des commandes par projet (mécanisme d&#x27;extension)</span><div class="intro">Depuis que les commandes d&#x27;Armature sont des skills du plugin (ADR 0004), un projet qui veut spécialiser une commande (p. ex. un workflow de changelog maison) n&#x27;a que deux options…</div><a class="file" href="backlog/command-extension-mechanism.md">command-extension-mechanism.md</a></div>
 <div class="backlog-item"><span class="title">Invocation d&#x27;une commande par un orchestrateur (le trou de `disable-model-invocation`)</span><div class="intro">Les 8 skills du plugin portent disable-model-invocation: true (bootstrap, capture-lessons, changelog-capture, changelog-draft, dashboard, document-standards, new-adr,…</div><a class="file" href="backlog/orchestrated-command-invocation.md">orchestrated-command-invocation.md</a></div>
+<div class="backlog-item"><span class="title">Trouvailles du run de self-bootstrap (2026-09-09)</span><div class="intro">Date : 2026-09-09 · Cible : /mnt/c/dev/Armature/.claude/worktrees/agent-a1fe7a53d578a80a2 (worktree isolé)</div><a class="file" href="backlog/self-bootstrap-run-findings.md">self-bootstrap-run-findings.md</a></div>
 </div>
 </div></article>
 <article class="track status-accepted">
@@ -141,11 +142,12 @@
 <div class="track-col plan-block"><h4>Plan(s) compagnon(s)</h4>
 <div class="plan"><div class="title">Plan — Mécanisme d&#x27;extension des commandes (tier b) — compagnon de l&#x27;ADR 0007</div><div class="summary">Les skills de base vivent sous plugin/skills/&lt;nom&gt;/SKILL.md, partagées, lues depuis ${CLAUDE_PLUGIN_ROOT}. Aujourd&#x27;hui, un projet qui veut les spécialiser les forke (tier c) — Holoon en a 6, dupliquées de la base (voir le diagnostic 2026-07-08). On veut : base au plugin +…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#16a34a;background:#dcfce7">Implemented</span> <a class="file" href="plans/2026-07-08-mecanisme-extension-tier-b.md">2026-07-08-mecanisme-extension-tier-b.md</a></div></div>
 </div>
-<div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(3)</span></h4>
+<div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(4)</span></h4>
 <div class="backlog-list">
 <div class="backlog-item"><span class="title">Personnalisation des commandes par projet (mécanisme d&#x27;extension)</span><div class="intro">Depuis que les commandes d&#x27;Armature sont des skills du plugin (ADR 0004), un projet qui veut spécialiser une commande (p. ex. un workflow de changelog maison) n&#x27;a que deux options…</div><a class="file" href="backlog/command-extension-mechanism.md">command-extension-mechanism.md</a></div>
 <div class="backlog-item"><span class="title">Mode de remplacement de commande (via l&#x27;overlay)</span><div class="intro">Étendre le mécanisme d&#x27;overlay du tier (b) (ADR 0007) pour qu&#x27;un fichier .claude/armature/&lt;nom&gt;.md puisse remplacer entièrement la commande de base — pas seulement l&#x27;enrichir aux…</div><a class="file" href="backlog/command-replacement-mode.md">command-replacement-mode.md</a></div>
 <div class="backlog-item"><span class="title">Invocation d&#x27;une commande par un orchestrateur (le trou de `disable-model-invocation`)</span><div class="intro">Les 8 skills du plugin portent disable-model-invocation: true (bootstrap, capture-lessons, changelog-capture, changelog-draft, dashboard, document-standards, new-adr,…</div><a class="file" href="backlog/orchestrated-command-invocation.md">orchestrated-command-invocation.md</a></div>
+<div class="backlog-item"><span class="title">Trouvailles du run de self-bootstrap (2026-09-09)</span><div class="intro">Date : 2026-09-09 · Cible : /mnt/c/dev/Armature/.claude/worktrees/agent-a1fe7a53d578a80a2 (worktree isolé)</div><a class="file" href="backlog/self-bootstrap-run-findings.md">self-bootstrap-run-findings.md</a></div>
 </div>
 </div></article>
 <article class="track status-accepted">
@@ -157,9 +159,10 @@
 <div class="track-col plan-block"><h4>Plan(s) compagnon(s)</h4>
 <div class="plan"><div class="title">Plan — Récolte du contexte hors-code au bootstrap (compagnon de l&#x27;ADR 0008)</div><div class="summary">Un seul fichier est concerné : plugin/skills/bootstrap/SKILL.md (138 lignes avant la modification, 7 phases après). Aucun template en/fr n&#x27;est touché — donc pas de contrainte de parité, mais tools/lint-templates.py reste à faire tourner pour vérifier qu&#x27;on n&#x27;a rien cassé par…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#16a34a;background:#dcfce7">Implemented</span> <a class="file" href="plans/2026-09-09-recolte-contexte-bootstrap.md">2026-09-09-recolte-contexte-bootstrap.md</a></div></div>
 </div>
-<div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(1)</span></h4>
+<div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(2)</span></h4>
 <div class="backlog-list">
-<div class="backlog-item"><span class="title">Appliquer Armature à Armature (dogfooding complet)</span><div class="intro">État : pas tranché. Question récurrente, posée à nouveau le 2026-09-09.</div><a class="file" href="backlog/appliquer-armature-a-armature.md">appliquer-armature-a-armature.md</a></div>
+<div class="backlog-item"><span class="title">Appliquer Armature à Armature (dogfooding complet)</span><div class="intro">État : piste (A&#x27;) appliquée le 2026-09-09 après un run réel de la piste (B). Le reste (copie doctrinale de workflow.md/persistence-strategy.md) reste écarté ; ce fichier est…</div><a class="file" href="backlog/appliquer-armature-a-armature.md">appliquer-armature-a-armature.md</a></div>
+<div class="backlog-item"><span class="title">Invocation d&#x27;une commande par un orchestrateur (le trou de `disable-model-invocation`)</span><div class="intro">Les 8 skills du plugin portent disable-model-invocation: true (bootstrap, capture-lessons, changelog-capture, changelog-draft, dashboard, document-standards, new-adr,…</div><a class="file" href="backlog/orchestrated-command-invocation.md">orchestrated-command-invocation.md</a></div>
 </div>
 </div></article>
 </section>
