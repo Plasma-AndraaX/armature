@@ -84,6 +84,8 @@ These two files are **not** append-only. Edit the precise section concerned, avo
 
 #### `docs/plans/<slug>.md` in-progress
 
+> Skip `docs/plans/template.md`: it is the shipped stub, and its `in-progress` frontmatter is the correct starting value for a real plan — not a signal that one is open.
+
 - **Progress log**: if a lot shipped, add a line to the *Progress* section with the merge commit's SHA.
 - **Follow-ups**: anything surfaced that's out of the current plan's scope → *Follow-ups surfaced during implementation* section, dated.
 

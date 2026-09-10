@@ -23,7 +23,7 @@ Before anything else, check whether this project provides an overlay for this co
 ## Canonical sources (read in this order)
 
 1. **`docs/backlog/README.md`** — skeleton. Its sections are the **resting** prioritization; they feed the readiness classification (mapping below), they are **not** the output's section plan.
-2. **`docs/plans/<slug>.md`** with frontmatter `status: in-progress` — extract:
+2. **`docs/plans/<slug>.md`** with frontmatter `status: in-progress` — **skip `docs/plans/template.md`**, the shipped stub, whose frontmatter legitimately reads `in-progress` (it is the right starting value when a real plan is opened from it). Without this, every bootstrapped project reports a phantom active plan on every run. — extract:
    - unchecked `[ ]` items from `## Next actions`;
    - open topics from `## Open questions` not yet resolved (not `~~…~~`);
    - `Lot N — …` entries from `## Implementation lots` missing from `## Progress` / Decision log as shipped.
@@ -31,7 +31,7 @@ Before anything else, check whether this project provides an overlay for this co
 
 **Do NOT use**: `// TODO:` / `// FIXME:` / `// XXX:` in code (noisy, non-canonical); issue trackers unless referenced from the backlog/a plan.
 
-**Exclude**: closing/archive README sections (e.g. "Reference (closed topics)").
+**Exclude**: closing/archive README sections (e.g. "Reference (closed topics)"); `docs/plans/template.md` and `docs/adr/template.md`, which are stubs, not content.
 
 > `[project anchor: silent-delivery-detection]` — if a project overlay defines a `## silent-delivery-detection` section, use its project-specific grep(s)/paths for the silent-delivery check above (e.g. domain-event files), plus any project-specific canonical sources or exclusions it lists.
 
