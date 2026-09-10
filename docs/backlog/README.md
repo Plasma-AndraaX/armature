@@ -4,7 +4,7 @@ Sujets ouverts sur le kit lui-même (pas sur un projet bootstrapé). Depuis le 2
 
 ## Action manuelle requise (pas automatisable depuis cette session)
 
-_(vide — le seul item de cette section a été traité, voir ci-dessous)_
+- [ ] **Vérifier l'install du plugin sur une machine sans le dépôt** — sous-critère du Lot 5 de [`armature-plugin.md`](../plans/armature-plugin.md) jamais exercé : toutes les installs connues d'`armature@armature` vivent sur la machine de développement, qui possède aussi le clone. Un `/plugin marketplace add Plasma-AndraaX/armature` + `/plugin install` depuis une machine vierge est la seule façon de vérifier que rien ne dépend silencieusement du working tree. Pas automatisable depuis une session ici — d'où cette section. Noté le 2026-09-10 en clôturant le plan.
 
 ## Sujets à mûrir
 

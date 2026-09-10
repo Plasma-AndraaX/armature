@@ -1,7 +1,7 @@
 ---
-status: in-progress
+status: implemented
 created: 2026-07-04
-settled:
+settled: 2026-07-06
 related-adr: 0004
 ---
 
@@ -101,9 +101,11 @@ Résolution `KIT_ROOT` dans les skills : **`${CLAUDE_PLUGIN_ROOT}`** remplace in
 - **2026-07-04** — Simplifications actées ([ADR 0005](../adr/0005-simplifications-post-plugin.md)) : profil unique (Full), suppression de `propose`/`pull` et du tampon, langue via `${user_config.lang}`. Résout Q1/Q2/Q3/Q5.
 - **2026-07-04** — Lot 1 livré : squelette plugin **sous `plugin/`** (isolé de la doc de dev), `marketplace.json` racine → `source: ./plugin`, pilote `new-adr` → `/armature:new-adr`. `claude plugin validate --strict` vert (plugin + marketplace). Structure sous-dossier retenue après que le validateur a signalé le `CLAUDE.md` de dev embarqué en structure « à la racine ».
 
+- **2026-09-10** — Plan **clôturé rétroactivement** (`implemented`, `settled: 2026-07-06`). Les lots 2 à 5 étaient livrés depuis la 0.5.0 sans que les cases soient cochées ni le statut fermé ; le plan ressortait donc en `in-progress` sur le tableau de bord et à chaque `/armature:review-backlog`. Fermeture après vérification lot par lot des critères de sortie, pas sur mémoire. Le **Lot 6** (marketplace communautaire) reste *gated future* — il n'a jamais fait partie du périmètre livrable.
+
 ## Prochaines actions
 
 - [x] Lot 1 — squelette plugin (sous `plugin/`) + pilote `new-adr` ; `validate --strict` vert. Reste : test d'invocation *live* (`claude --plugin-dir .`) côté utilisateur.
-- [ ] Lot 2 — `${CLAUDE_PLUGIN_ROOT}` dans bootstrap + migration du skill.
+- [x] Lot 2 — `${CLAUDE_PLUGIN_ROOT}` dans bootstrap + migration du skill. Vérifié le 2026-09-10 : plus aucun `$ARMATURE_HOME` ni `/mnt/c/dev/armature` sous `plugin/`.
 - [x] Q1/Q2/Q3/Q5 tranchées (ADR 0005 + `${user_config.lang}`) ; reste Q4 (`skills/` format) à vérifier au Lot 1.
-- [ ] Lot 5 — publier + re-migrer voxtrail/Unfog.
+- [x] Lot 5 — publier + re-migrer voxtrail/Unfog. Livré avec la [0.5.0](../../CHANGELOG.md) (2026-07-06). **Réserve** : le sous-critère « install tierce vérifiée sur une machine sans le repo » n'a jamais été exercé — versé au backlog (§ *Action manuelle requise*) plutôt que laissé bloquer le lot.

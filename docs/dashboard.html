@@ -47,7 +47,7 @@
   <div class="subtitle">Chaque ADR forme un track : décision + plan compagnon + items de backlog qui la mentionnent. Vue <b>architecturale</b> — pour la <b>liste tactique priorisée</b>, utiliser <code>/armature:review-backlog</code>. État au 2026-09-10.</div>
   <div class="stats">
     <div class="stat"><strong>8</strong> ADR (8 accepted, 0 deferred)</div>
-    <div class="stat"><strong>2</strong> plans in-progress · <strong>6</strong> implemented</div>
+    <div class="stat"><strong>0</strong> plans in-progress · <strong>8</strong> implemented</div>
     <div class="stat"><strong>11</strong> backlog liés à une ADR · <strong>0</strong> bundle(s) candidat(s) ADR · <strong>0</strong> en référence</div>
   </div>
   <div class="legend">Légende : <span class="badge" style="color:#16a34a;background:#dcfce7">Accepted</span> <span class="badge" style="color:#2563eb;background:#dbeafe">In progress</span> <span class="badge" style="color:#6b7280;background:#f3f4f6">Deferred</span> <span class="badge" style="color:#f59e0b;background:#fef3c7">Proposed</span></div>
@@ -97,7 +97,7 @@
 <div class="summary">Distribuer Armature comme un plugin Claude Code nommé armature, hébergé dans le repo Plasma-AndraaX/armature qui devient un marketplace. Les commandes deviennent des skills du plugin (invoquées /armature:&lt;nom&gt;) ; les templates/ sont bundlés dans le plugin et résolus via…</div>
 <div class="meta"><span class="badge" style="color:#16a34a;background:#dcfce7">Accepted</span> <a class="file" href="adr/0004-plugin-armature.md">0004-plugin-armature.md</a></div></div>
 <div class="track-col plan-block"><h4>Plan(s) compagnon(s)</h4>
-<div class="plan"><div class="title">Plan — Armature comme plugin `armature` (compagnon de l&#x27;ADR 0004)</div><div class="summary">Faire passer Armature du modèle « copie de fichiers dans chaque projet + KIT_ROOT résolu par chemin en dur » au modèle « plugin installé une fois, commandes namespacées /armature:…, templates lus depuis l&#x27;installation ». Contraintes : les commandes doivent marcher dans tout…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#2563eb;background:#dbeafe">In progress</span> <a class="file" href="plans/armature-plugin.md">armature-plugin.md</a></div></div>
+<div class="plan"><div class="title">Plan — Armature comme plugin `armature` (compagnon de l&#x27;ADR 0004)</div><div class="summary">Faire passer Armature du modèle « copie de fichiers dans chaque projet + KIT_ROOT résolu par chemin en dur » au modèle « plugin installé une fois, commandes namespacées /armature:…, templates lus depuis l&#x27;installation ». Contraintes : les commandes doivent marcher dans tout…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#16a34a;background:#dcfce7">Implemented</span> <a class="file" href="plans/armature-plugin.md">armature-plugin.md</a></div></div>
 </div>
 <div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(3)</span></h4>
 <div class="backlog-list">
@@ -113,7 +113,7 @@
 <div class="summary">Réduire Armature à un seul profil (Full) et supprimer la synchronisation projet↔kit. Concrètement : retirer l&#x27;axe de marqueurs FULL-ONLY/MINIMAL-ONLY (le contenu FULL-ONLY devient inconditionnel, le contenu MINIMAL-ONLY est supprimé), la question de profil au bootstrap, les…</div>
 <div class="meta"><span class="badge" style="color:#16a34a;background:#dcfce7">Accepted</span> <a class="file" href="adr/0005-simplifications-post-plugin.md">0005-simplifications-post-plugin.md</a></div></div>
 <div class="track-col plan-block"><h4>Plan(s) compagnon(s)</h4>
-<div class="plan"><div class="title">Plan — Simplifications post-plugin (compagnon de l&#x27;ADR 0005)</div><div class="summary">Enlever trois pans du kit : (1) l&#x27;axe de profil Full/Minimal (44 paires FULL-ONLY → inconditionnel, 4 paires MINIMAL-ONLY → supprimées) ; (2) la synchronisation projet↔kit (2 skills propose/pull × 2 langues) ; (3) le tampon .armature-version et son versioning. Contraintes :…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#2563eb;background:#dbeafe">In progress</span> <a class="file" href="plans/post-plugin-simplification.md">post-plugin-simplification.md</a></div></div>
+<div class="plan"><div class="title">Plan — Simplifications post-plugin (compagnon de l&#x27;ADR 0005)</div><div class="summary">Enlever trois pans du kit : (1) l&#x27;axe de profil Full/Minimal (44 paires FULL-ONLY → inconditionnel, 4 paires MINIMAL-ONLY → supprimées) ; (2) la synchronisation projet↔kit (2 skills propose/pull × 2 langues) ; (3) le tampon .armature-version et son versioning. Contraintes :…</div><div class="meta" style="margin-top:3px"><span class="badge small" style="color:#16a34a;background:#dcfce7">Implemented</span> <a class="file" href="plans/post-plugin-simplification.md">post-plugin-simplification.md</a></div></div>
 </div>
 <div class="track-col"><h4>Backlog actif lié <span style="color:#9ca3af;font-weight:normal;text-transform:none;letter-spacing:0">(0)</span></h4>
 <div class="backlog-empty">— Aucun item de backlog ouvert ne référence cette ADR</div>

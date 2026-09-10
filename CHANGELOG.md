@@ -10,7 +10,8 @@ This is **not** the same thing as `docs/changelog/` inside a *bootstrapped* proj
 
 ## [Unreleased]
 
-_(nothing yet)_
+### Fixed
+- **The two plans behind the plugin migration were still `in-progress` four months after shipping.** `docs/plans/armature-plugin.md` (ADR 0004) had lots 2 and 5 unchecked; `docs/plans/post-plugin-simplification.md` (ADR 0005) had **none** of its four boxes ticked — while everything they describe has been running in production since 0.5.0 (2026-07-06). Both were inflating the dashboard's "2 plans in-progress" and resurfacing on every `/armature:review-backlog`, the same class of noise as the plan-stub bug 0.7.1 just fixed. Closed retroactively (`implemented`, `settled: 2026-07-06`) after checking each exit criterion against the repo as it stands, not from memory. Two things were deliberately *not* swept under the rug: the Lot 5 sub-criterion "third-party install verified on a machine without the repo", never exercised — now a backlog item under *Action manuelle requise* — and plan 0005's Q2 pre-deletion guard, which is untraceable after the fact and is recorded as such rather than as verified.
 
 ## [0.7.1] - 2026-09-10
 

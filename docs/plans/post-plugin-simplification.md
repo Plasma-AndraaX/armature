@@ -1,7 +1,7 @@
 ---
-status: in-progress
+status: implemented
 created: 2026-07-04
-settled:
+settled: 2026-07-06
 related-adr: 0005
 ---
 
@@ -69,9 +69,11 @@ Après nettoyage, un projet bootstrapé reçoit **un seul jeu de doc** (ex-Full)
 
 - **2026-07-04** — Décidé (ADR 0005) : profil unique (Full), suppression de `propose`/`pull` et du tampon `.armature-version`. Déclencheur : la bascule plugin (ADR 0004) rend ces trois pans superflus. Langue de contenu via `${user_config.lang}`.
 
+- **2026-09-10** — Plan **clôturé rétroactivement** (`implemented`, `settled: 2026-07-06`). Les trois lots étaient livrés avec la 0.5.0 mais **aucune** case n'avait jamais été cochée ; le plan comptait comme actif partout. Fermeture après vérification des trois critères de sortie sur le dépôt tel qu'il est aujourd'hui. Le seul point non refermé proprement est la garde Q2, non traçable après coup.
+
 ## Prochaines actions
 
-- [ ] Lot A — aplatir le profil (marqueurs + bootstrap + lint).
-- [ ] Lot B — supprimer sync (skills + tampon + refs).
-- [ ] Lot C — doc de cadrage.
-- [ ] Vérifier Q2 (aucun fragment `MINIMAL-ONLY` unique) avant suppression.
+- [x] Lot A — aplatir le profil (marqueurs + bootstrap + lint). Vérifié le 2026-09-10 : aucun `FULL-ONLY`/`MINIMAL-ONLY` dans `plugin/templates/` ni `plugin/skills/` (seul résidu : un commentaire d'explication dans `tools/lint-templates.py`), lint vert.
+- [x] Lot B — supprimer sync (skills + tampon + refs). Vérifié le 2026-09-10 : `propose-kit-improvement`/`pull-kit-updates`/`armature-version` n'apparaissent plus que dans les notes de version datées du `CHANGELOG.md` — le critère de sortie mot pour mot.
+- [x] Lot C — doc de cadrage. Vérifié le 2026-09-10 : plus aucune mention de profil ni de Minimal dans `README.md`, `ADAPTING.md`, `CLAUDE.md`.
+- [x] Q2 — garde de pré-suppression, **non traçable a posteriori** : le contenu `MINIMAL-ONLY` supprimé n'est plus inspectable autrement que dans l'historique git. Aucun manque signalé depuis la 0.5.0. Clos comme tel, pas comme vérifié.
