@@ -38,6 +38,7 @@ If the topic checks **none** of these boxes, say so and propose a lighter altern
 
 Before writing anything, on your own:
 
+- **Start from the conversation if it already covered the topic** — this command is usually run *after* discussing it. Pull out what was already said: options raised and why some were ruled out, constraints and invariants surfaced, questions already settled. Restate them to the user for confirmation rather than re-deriving them from scratch: replaying a settled debate costs their time and can quietly reopen a choice they already made. **Guard**: a leaning or preference voiced in the conversation is **not** the explicit validation Phase 3 requires — confirm it there.
 - Restate the problem in your own words. If you can't, you haven't understood it — ask questions.
 - List the **invariants** and **constraints** (technical, business, deadline, stack).
 - Identify **at least 2 credible options**, not just "the obvious one". If you only find one, keep looking: you don't have an ADR, you have a TODO.

@@ -27,8 +27,8 @@ The two commands may look similar — they parse the same sources. The functiona
 | **Architectural** view: *"how is the system structured?"* | **Tactical** view: *"what do I work on now?"* |
 | Persistent HTML to keep open in a tab | Ephemeral markdown in the conversation |
 | ADR tracks + their linked backlog + ADR-candidate bundles | Prioritized list of isolated items, hot items, functional gaps |
-| **Includes**: ADR tracks with linked backlog, orphan PRIMARY bundles (ADR candidates), reference (closed) | **Includes**: active standalone items, orphan sub-items, next-step suggestion |
-| **Excludes**: standalone items without an ADR, orphan sub-items (delegated to `/review-backlog`) | **Excludes**: the ADR ↔ plan mechanics themselves |
+| **Includes**: ADR tracks with linked backlog, orphan PRIMARY bundles (ADR candidates), reference (closed) | **Includes**: active standalone items, orphan sub-items, next-step suggestion, unfiled material from the current conversation (📥) |
+| **Excludes**: standalone items without an ADR, orphan sub-items (delegated to `/review-backlog`), anything not yet filed — a persistent page only reflects what is written | **Excludes**: the ADR ↔ plan mechanics themselves |
 
 Concretely: an active backlog item with no ADR to its name and not part of a PRIMARY bundle shows up in `/review-backlog` but **not** in the dashboard. Conversely, the ADR ↔ plan relational structure is invisible in `/review-backlog` but central to the dashboard.
 
