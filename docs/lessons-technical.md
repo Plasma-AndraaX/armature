@@ -2,6 +2,27 @@
 
 Pièges non-évidents rencontrés en développant/distribuant le kit, qu'on ne peut pas reconstituer en lisant le code. Ajout **en tête** (append-only) ; une leçon invalidée est *superseded* (pas réécrite), son corps conservé en blockquote. Voir aussi `docs/testing.md` (dogfooding) et `CHANGELOG.md` (releases).
 
+## Un `/reload-plugins` ne vaut que pour les éditions qui le précèdent — et rien ne signale l'écart
+
+`--plugin-dir ./plugin` rend le dogfooding *live*, mais pas *continu* : `/reload-plugins` charge un **instantané**. Toute édition d'un `SKILL.md` postérieure au reload reste invisible jusqu'au reload suivant, et le texte du skill injecté dans la conversation peut donc **contredire le fichier sur disque** sans qu'aucun message ne le dise. Le piège n'est pas le cache d'une install (voir les deux leçons ci-dessous) : ici il n'y a qu'une seule source, elle est simplement figée dans le temps.
+
+- **Recharger après chaque édition**, pas une fois en début de session. Un reload fait *avant* d'éditer ne sert à rien.
+- **Quand une modification « ne prend pas », vérifier l'instantané avant de soupçonner son propre texte** : comparer le bloc injecté au fichier (`git log -1 -- <fichier>` + un `grep` sur la phrase qu'on vient d'écrire). On cherche sinon un défaut de rédaction dans un texte qui n'est pas celui qui tourne.
+
+Cas réel, le 2026-09-12 : deux lots d'éditions successifs sur `plugin/skills/review-backlog/SKILL.md` avec un seul `/reload-plugins` entre les deux. Le second run de la commande a été injecté avec l'ancienne structure (la nouvelle section en position 6) alors que le disque et `HEAD` portaient la nouvelle (position 1) — écart détecté seulement parce que la sortie attendue ne collait pas. Noter que `docs/testing.md` dit « éditer puis `/reload-plugins` recharge à chaud » : c'est vrai, et c'est exactement ce qui rassure à tort sur l'ordre inverse.
+
+_Captured 2026-09-12._
+
+## Une commande qui agrège des sources *écrites* est aveugle à la session en cours, même quand son texte la mentionne
+
+Deux fois à trois jours d'écart, une commande du kit a ignoré la conversation qui la lançait alors que son propre texte l'évoquait. `/armature:bootstrap` ne lisait que le *code* et générait `lessons-technical.md`, `docs/backlog/` et `docs/adr/` vides pendant que la session tenait 17 artefacts réels (corrigé par l'[ADR 0008](adr/0008-recolte-contexte-bootstrap.md)). Puis `/armature:review-backlog`, dont les deux sources canoniques sont le README du backlog et les plans `in-progress` : sa section « Hot now » disait bien « items the **current session** makes relevant », mais comme *critère de reclassement d'items déjà fichés* — jamais comme source. Tout ce qui n'était pas consigné mourait donc avec la session.
+
+La règle, en rédigeant un skill : **« la conversation en cours » doit être une étape numérotée du processus, pas une mention dans une description de section.** Une mention descriptive ne produit rien — d'autant qu'une consigne d'agrégation du type « don't invent anything, aggregate from canonical sources » pousse activement dans l'autre sens et doit alors être explicitement bornée aux sources écrites. Toute étape de ce genre porte ses deux gardes : **proposer sans jamais écrire** (la commande reste en lecture seule, la consignation est la décision de l'utilisateur) et **ne rapporter que ce qui a été dit** (une section vide annoncée telle quelle, pas remplie de travail plausible).
+
+Deux occurrences indépendantes font un motif, pas un accident : les 6 autres skills n'ont pas été audités sur ce point.
+
+_Captured 2026-09-12._
+
 ## Une install de plugin faite « juste pour un run » survit au run — et retombe sur le dépôt de dev
 
 Le 2026-09-09, pour faire tourner `/armature:bootstrap` dans un worktree isolé, Armature a été installé en scope **`user`** (et, 17 min plus tard, en scope `local` sur un répertoire d'overlay). Le worktree a disparu le jour même ; les installs, non. Pendant 24 h, le dépôt du kit a donc eu **deux** sources concurrentes pour les `/armature:*` : le snapshot en cache de l'install `user`, actif partout, et le `--plugin-dir ./plugin` de `./claude.sh`.

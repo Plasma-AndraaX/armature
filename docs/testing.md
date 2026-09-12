@@ -41,4 +41,4 @@ Le run manuel end-to-end n'a pas de commande unique : ouvrir Claude Code dans un
 ./claude.sh          # = claude --plugin-dir ./plugin
 ```
 
-Éditer `plugin/skills/<x>/SKILL.md` puis `/reload-plugins` recharge à chaud. **Ne pas** installer le plugin via un marketplace dans ce repo : ça copierait un snapshot en cache et masquerait tes éditions (deux copies divergentes). Le `--plugin-dir` est *la* voie live confirmée par la doc Claude Code.
+Éditer `plugin/skills/<x>/SKILL.md` puis `/reload-plugins` recharge à chaud — dans cet ordre, et **à chaque** lot d'éditions : un reload ne charge qu'un instantané, et le texte injecté peut ensuite contredire le disque en silence (voir `lessons-technical.md`). **Ne pas** installer le plugin via un marketplace dans ce repo : ça copierait un snapshot en cache et masquerait tes éditions (deux copies divergentes). Le `--plugin-dir` est *la* voie live confirmée par la doc Claude Code.
